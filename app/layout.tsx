@@ -9,7 +9,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "Diary",
+  title: "Solo Diary",
   description:
     "Simple daily journaling. No unnecessary features, just what you need for recording your daily life.",
 };
