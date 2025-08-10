@@ -4,7 +4,6 @@
 create table if not exists public.users (
   id uuid references auth.users(id) on delete cascade primary key,
   username text unique not null,
-  email text unique not null,
   profile_image_url text,
   bio text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -12,8 +11,7 @@ create table if not exists public.users (
   
   -- バリデーション制約
   constraint username_length check (char_length(username) >= 3 and char_length(username) <= 30),
-  constraint username_format check (username ~ '^[a-zA-Z0-9_-]+$'),
-  constraint email_format check (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+  constraint username_format check (username ~ '^[a-zA-Z0-9_-]+$')
 );
 
 -- posts テーブル
@@ -40,7 +38,6 @@ create table if not exists public.images (
 
 -- インデックスの作成
 create index if not exists users_username_idx on public.users(username);
-create index if not exists users_email_idx on public.users(email);
 create index if not exists posts_user_id_idx on public.posts(user_id);
 create index if not exists posts_created_at_idx on public.posts(created_at desc);
 create index if not exists posts_user_created_idx on public.posts(user_id, created_at desc);
@@ -130,16 +127,12 @@ create trigger handle_posts_updated_at
 create or replace function public.handle_new_user()
 returns trigger as $$
 declare
-  user_email text;
   user_username text;
 begin
-  -- auth.usersからemailを取得
-  user_email := new.email;
-  
   -- メタデータからusernameを取得（なければemailのローカル部分を使用）
   user_username := coalesce(
     new.raw_user_meta_data->>'username',
-    split_part(user_email, '@', 1)
+    split_part(new.email, '@', 1)
   );
   
   -- usernameの重複チェック・調整
@@ -147,8 +140,8 @@ begin
     user_username := user_username || '_' || floor(random() * 1000)::text;
   end loop;
   
-  insert into public.users (id, username, email)
-  values (new.id, user_username, user_email);
+  insert into public.users (id, username)
+  values (new.id, user_username);
   
   return new;
 end;
