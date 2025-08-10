@@ -1,8 +1,15 @@
 import { supabase } from "./supabase/client";
-import { PostUpdate, PostWithImages, CreatePostData } from "@/types/database";
+import {
+  PostUpdate,
+  PostWithImages,
+  CreatePostData,
+  Post,
+} from "@/types/database";
 
-// 投稿関連
-export const getUserPosts = async (userId: string, limit?: number) => {
+export const getUserPosts = async (
+  userId: string,
+  limit?: number
+): Promise<PostWithImages[]> => {
   let query = supabase
     .from("posts")
     .select(
@@ -23,7 +30,7 @@ export const getUserPosts = async (userId: string, limit?: number) => {
   return data as PostWithImages[];
 };
 
-export const getPost = async (postId: number) => {
+export const getPost = async (postId: number): Promise<Post> => {
   const { data, error } = await supabase
     .from("posts")
     .select(
@@ -40,7 +47,10 @@ export const getPost = async (postId: number) => {
   return data;
 };
 
-export const createPost = async (userId: string, postData: CreatePostData) => {
+export const createPost = async (
+  userId: string,
+  postData: CreatePostData
+): Promise<Post> => {
   const { data: post, error: postError } = await supabase
     .from("posts")
     .insert({
@@ -89,7 +99,10 @@ export const createPost = async (userId: string, postData: CreatePostData) => {
   return post;
 };
 
-export const updatePost = async (postId: number, updates: PostUpdate) => {
+export const updatePost = async (
+  postId: number,
+  updates: PostUpdate
+): Promise<Post> => {
   const { data, error } = await supabase
     .from("posts")
     .update(updates)
@@ -101,7 +114,7 @@ export const updatePost = async (postId: number, updates: PostUpdate) => {
   return data;
 };
 
-export const deletePost = async (postId: number) => {
+export const deletePost = async (postId: number): Promise<void> => {
   const { data: images } = await supabase
     .from("images")
     .select("url")
@@ -119,15 +132,4 @@ export const deletePost = async (postId: number) => {
   const { error } = await supabase.from("posts").delete().eq("id", postId);
 
   if (error) throw error;
-};
-
-export const searchUsers = async (query: string) => {
-  const { data, error } = await supabase
-    .from("users")
-    .select("id, username, profile_image_url")
-    .ilike("username", `%${query}%`)
-    .limit(10);
-
-  if (error) throw error;
-  return data;
 };
