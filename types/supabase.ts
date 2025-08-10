@@ -99,7 +99,6 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
-          email: string
           id: string
           profile_image_url: string | null
           updated_at: string
@@ -108,7 +107,6 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
-          email: string
           id: string
           profile_image_url?: string | null
           updated_at?: string
@@ -117,7 +115,6 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
-          email?: string
           id?: string
           profile_image_url?: string | null
           updated_at?: string
