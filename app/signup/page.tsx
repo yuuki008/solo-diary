@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ export default function SignupPage() {
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!loading && authUser) {
@@ -71,20 +72,35 @@ export default function SignupPage() {
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar className="size-14">
-                {profilePreview ? (
-                  <AvatarImage src={profilePreview} alt="preview" />
-                ) : (
-                  <AvatarFallback>PF</AvatarFallback>
-                )}
-              </Avatar>
-              <label className="text-sm font-medium" htmlFor="profile">
+              <button
+                type="button"
+                className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="プロフィール画像をアップロード"
+                onClick={() => fileInputRef.current?.click()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }
+                }}
+              >
+                <Avatar className="size-14">
+                  {profilePreview ? (
+                    <AvatarImage src={profilePreview} alt="preview" />
+                  ) : (
+                    <AvatarFallback>PF</AvatarFallback>
+                  )}
+                </Avatar>
+              </button>
+              <label className="text-sm font-medium flex-1" htmlFor="profile">
                 プロフィール画像
               </label>
               <Input
                 id="profile"
                 type="file"
                 accept="image/*"
+                ref={fileInputRef}
+                className="sr-only"
                 onChange={(e) => onSelectFile(e.target.files?.[0] ?? null)}
               />
             </div>
@@ -140,13 +156,16 @@ export default function SignupPage() {
           </form>
         </CardContent>
         <CardFooter>
+          <p className="text-sm text-gray-500">
+            すでにアカウントをお持ちの方は
+          </p>
           <Button
             variant="link"
             type="button"
-            className="px-0"
+            className="px-1"
             onClick={() => router.push("/login")}
           >
-            すでにアカウントをお持ちの方はこちら
+            こちら
           </Button>
         </CardFooter>
       </Card>
