@@ -48,9 +48,7 @@ export default function SignupPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await signUp(email, password, username);
-      // プロフィール画像は後でプロフィール編集でアップロード可能にする想定。
-      // ここでは最低限のサインアップと即時ログイン遷移のみ。
+      await signUp(email, password, username, profileImageFile);
       router.replace("/");
     } catch (err) {
       const message =

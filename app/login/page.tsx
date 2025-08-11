@@ -95,13 +95,14 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter>
+          <p className="text-sm text-gray-500">アカウントをお持ちでない方は</p>
           <Button
             variant="link"
             type="button"
             className="px-0"
             onClick={() => router.push("/signup")}
           >
-            アカウントをお持ちでない方はこちら
+            こちら
           </Button>
         </CardFooter>
       </Card>

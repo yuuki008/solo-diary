@@ -9,7 +9,12 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, username: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    username: string,
+    profileImageFile: File | null
+  ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<void>;
@@ -71,13 +76,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, username: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    username: string,
+    profileImageFile: File | null
+  ) => {
+    let profileImageUrl = null;
+    if (profileImageFile) {
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("images").getPublicUrl(profileImageFile.name);
+
+      profileImageUrl = publicUrl;
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           username: username,
+          profile_image_url: profileImageUrl,
         },
       },
     });
