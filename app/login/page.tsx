@@ -5,14 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,66 +38,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>ログイン</CardTitle>
-          <CardDescription>
-            メールアドレスとパスワードでログインします。
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="email">
-                メールアドレス
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-                autoComplete="email"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="password">
-                パスワード
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
-            </div>
-            {error && (
-              <p className="text-sm text-red-600" role="alert">
-                {error}
-              </p>
-            )}
-            <Button type="submit" disabled={submitting} className="w-full">
-              {submitting ? "ログイン中..." : "ログイン"}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter>
-          <p className="text-sm text-gray-500">アカウントをお持ちでない方は</p>
-          <Button
-            variant="link"
-            type="button"
-            className="px-1"
-            onClick={() => router.push("/signup")}
-          >
-            こちら
+    <div className="min-h-dvh max-w-sm mx-auto w-[95%] flex flex-col items-center justify-center">
+      <form onSubmit={onSubmit} className="space-y-4 w-full">
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="••••••••"
+          autoComplete="current-password"
+        />
+        {error && (
+          <p className="text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+
+        <div className="flex justify-end">
+          <Button disabled={submitting} type="submit">
+            {submitting ? "ログイン中..." : "ログイン"}
           </Button>
-        </CardFooter>
-      </Card>
+        </div>
+      </form>
+      <div className="mt-4 w-full flex items-center">
+        <p className="text-sm text-gray-500">アカウントをお持ちでない方は</p>
+        <Button
+          variant="link"
+          type="button"
+          className="px-1"
+          onClick={() => router.push("/signup")}
+        >
+          こちら
+        </Button>
+      </div>
     </div>
   );
 }
