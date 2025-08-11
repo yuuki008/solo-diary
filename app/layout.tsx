@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning
-        className={`${notoSansJP.variable} antialiased`}
+        className={`${notoSansJP.variable} antialiased dark`}
       >
         <AuthProvider>{children}</AuthProvider>
       </body>
