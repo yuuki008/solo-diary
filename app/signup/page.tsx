@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 export default function SignupPage() {
@@ -16,11 +15,8 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [profilePreview, setProfilePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!loading && authUser) {
@@ -28,22 +24,12 @@ export default function SignupPage() {
     }
   }, [authUser, loading, router]);
 
-  const onSelectFile = (file: File | null) => {
-    setProfileImageFile(file);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setProfilePreview(url);
-    } else {
-      setProfilePreview(null);
-    }
-  };
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      await signUp(email, password, username, profileImageFile);
+      await signUp(email, password, username);
       router.replace("/");
     } catch (err) {
       const message =
@@ -58,39 +44,6 @@ export default function SignupPage() {
     <div className="min-h-dvh max-w-sm mx-auto w-[95%] flex flex-col items-center justify-center">
       <h1 className="mb-8 text-center text-4xl font-bold">Solo Diary</h1>
       <form onSubmit={onSubmit} className="space-y-4 w-full">
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="プロフィール画像をアップロード"
-            onClick={() => fileInputRef.current?.click()}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                fileInputRef.current?.click();
-              }
-            }}
-          >
-            <Avatar className="size-14">
-              {profilePreview ? (
-                <AvatarImage src={profilePreview} alt="preview" />
-              ) : (
-                <AvatarFallback>PF</AvatarFallback>
-              )}
-            </Avatar>
-          </button>
-          <label className="text-sm font-medium flex-1" htmlFor="profile">
-            Profile image
-          </label>
-          <Input
-            id="profile"
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            className="sr-only"
-            onChange={(e) => onSelectFile(e.target.files?.[0] ?? null)}
-          />
-        </div>
         <Input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
