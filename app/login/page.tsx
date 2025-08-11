@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,6 +41,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-dvh max-w-sm mx-auto w-[95%] flex flex-col items-center justify-center">
+      <h1 className="mb-8 text-center text-4xl font-bold">Solo Diary</h1>
       <form onSubmit={onSubmit} className="space-y-4 w-full">
         <Input
           type="email"
@@ -62,22 +65,16 @@ export default function LoginPage() {
           </p>
         )}
 
-        <div className="flex justify-end">
-          <Button disabled={submitting} type="submit">
-            {submitting ? "ログイン中..." : "ログイン"}
-          </Button>
-        </div>
-      </form>
-      <div className="mt-4 w-full flex items-center">
-        <p className="text-sm text-gray-500">アカウントをお持ちでない方は</p>
-        <Button
-          variant="link"
-          type="button"
-          className="px-1"
-          onClick={() => router.push("/signup")}
-        >
-          こちら
+        <Button disabled={submitting} type="submit" className="w-full">
+          {submitting ? "Signing in..." : "Sign in"}
         </Button>
+      </form>
+      <Separator className="mt-6 mb-4" />
+      <div className="w-full flex items-center justify-center gap-1">
+        <p className="text-sm text-gray-500">Don&apos;t have an account?</p>
+        <Link href="/signup" className="text-sm text-blue-500 hover:underline">
+          Sign up
+        </Link>
       </div>
     </div>
   );
