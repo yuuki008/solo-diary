@@ -11,7 +11,7 @@ export default async function Home() {
   const posts = await getUserPosts(user?.id ?? "");
 
   if (posts.length === 0) {
-    return <div>No posts found</div>;
+    return <div className="text-center text-2xl">No posts found</div>;
   }
 
   return (
