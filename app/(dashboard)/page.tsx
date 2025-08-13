@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { getUserPosts } from "@/lib/database";
 import { createClient } from "@/lib/supabase/server";
-import { Plus } from "lucide-react";
 import { cookies } from "next/headers";
+import CreatePosterDrawer from "./create-poster-drawer";
 
 export default async function Home() {
   const supabase = await createClient(cookies());
@@ -23,12 +22,7 @@ export default async function Home() {
           ))}
         </div>
       )}
-      <div className="fixed w-full bottom-4 left-0 flex justify-center">
-        <Button className="rounded-full">
-          <Plus />
-          New Post
-        </Button>
-      </div>
+      <CreatePosterDrawer />
     </div>
   );
 }
