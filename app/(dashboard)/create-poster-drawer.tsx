@@ -96,7 +96,7 @@ export default function CreatePosterDrawer() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground/60 grid place-items-center text-muted-foreground/70 hover:text-muted-foreground transition"
+                className="cursor-pointer w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground/60 grid place-items-center text-muted-foreground/70 hover:text-muted-foreground transition"
                 aria-label="Upload images"
               >
                 <Plus className="w-6 h-6" />
