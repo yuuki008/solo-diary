@@ -68,55 +68,55 @@ export default function CreatePosterDrawer() {
             <DrawerTitle>New Post</DrawerTitle>
           </DrawerHeader>
 
-          <div className="flex flex-col px-4">
-            <div className="mb-4">
-              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
-                {images.map((img) => (
-                  <div
-                    key={img.id}
-                    className="group relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border"
-                  >
-                    <button
-                      className="absolute cursor-pointer top-1 right-1 z-20 rounded-md p-1 bg-black/50 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
-                      onClick={() => handleRemoveImage(img.id)}
-                      aria-label="Remove image"
-                      title="Remove image"
-                    >
-                      <X className="w-4 h-4 text-white" />
-                    </button>
-                    <Image
-                      src={img.url}
-                      alt="uploaded preview"
-                      fill
-                      sizes="96px"
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground/60 grid place-items-center text-muted-foreground/70 hover:text-muted-foreground transition"
-                  aria-label="Upload images"
+          <div className="flex flex-col px-4 gap-4">
+            <div className="flex flex-wrap justify-between gap-y-2">
+              {images.map((img) => (
+                <div
+                  key={img.id}
+                  className="group relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border"
                 >
-                  <Plus className="w-6 h-6" />
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleSelectImages}
-                  className="hidden"
-                />
-              </div>
+                  <button
+                    className="absolute cursor-pointer top-1 right-1 z-20 rounded-md p-1 bg-black/50 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+                    onClick={() => handleRemoveImage(img.id)}
+                    aria-label="Remove image"
+                    title="Remove image"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                  <Image
+                    src={img.url}
+                    alt="uploaded preview"
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground/60 grid place-items-center text-muted-foreground/70 hover:text-muted-foreground transition"
+                aria-label="Upload images"
+              >
+                <Plus className="w-6 h-6" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleSelectImages}
+                className="hidden"
+              />
             </div>
+
             <Textarea
               className="min-h-[200px]"
               placeholder="What's on your mind?"
             />
           </div>
+
           <DrawerFooter>
             <Button className="w-full">Post</Button>
           </DrawerFooter>
