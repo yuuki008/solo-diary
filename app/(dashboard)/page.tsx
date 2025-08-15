@@ -1,15 +1,24 @@
+"use client";
+
 import { getUserPosts } from "@/lib/database";
-import { createClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
 import CreatePosterDrawer from "./create-poster-drawer";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { PostWithImages } from "@/types/database";
 
-export default async function Home() {
-  const supabase = await createClient(cookies());
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function Home() {
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<PostWithImages[]>([]);
 
-  const posts = await getUserPosts(user?.id ?? "");
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchPosts = async () => {
+      const posts = await getUserPosts(user.id);
+      setPosts(posts);
+    };
+    fetchPosts();
+  }, [user]);
 
   return (
     <div className="flex flex-col gap-4">
