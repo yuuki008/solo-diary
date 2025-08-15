@@ -26,7 +26,7 @@ export default function Home() {
       {posts.length === 0 ? (
         <div className="text-center text-2xl">No posts yet</div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

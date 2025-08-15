@@ -1,6 +1,6 @@
 import { PostWithImages } from "@/types/database";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 
 const MAX_DISPLAY_IMAGES = 4;
 
@@ -8,10 +8,10 @@ export default function PostCard({ post }: { post: PostWithImages }) {
   const displayImages = post.images.slice(0, MAX_DISPLAY_IMAGES);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <div
         className={cn(
-          "grid w-full gap-1 rounded overflow-hidden",
+          "grid w-full gap-1 rounded overflow-hidden mb-4",
           post.images.length === 3 ? "grid-cols-3" : "grid-cols-2"
         )}
       >
@@ -49,7 +49,12 @@ export default function PostCard({ post }: { post: PostWithImages }) {
           );
         })}
       </div>
-      <div className="text-sm overflow-wrap break-words">{post.content}</div>
+      <div className="text-sm overflow-wrap break-words mb-2">
+        {post.content}
+      </div>
+      <div className="flex justify-end text-xs text-muted-foreground">
+        {formatTime(post.created_at)}
+      </div>
     </div>
   );
 }
