@@ -14,6 +14,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, X } from "lucide-react";
 import { generateId } from "@/lib/utils";
+import { createPost } from "@/lib/database";
+import { useAuth } from "@/contexts/AuthContext";
 
 type UploadedImage = {
   id: string;
@@ -22,7 +24,9 @@ type UploadedImage = {
 };
 
 export default function CreatePosterDrawer() {
+  const { user } = useAuth();
   const [images, setImages] = useState<UploadedImage[]>([]);
+  const [content, setContent] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSelectImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +48,21 @@ export default function CreatePosterDrawer() {
 
   const handleRemoveImage = (id: string) => {
     setImages((prev) => prev.filter((img) => img.id !== id));
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+  };
+
+  const handlePost = async () => {
+    const res = await createPost(user?.id ?? "", {
+      content,
+      images: images.map((img) => img.file),
+    });
+    console.log(res);
+
+    setImages([]);
+    setContent("");
   };
 
   useEffect(() => {
@@ -114,11 +133,15 @@ export default function CreatePosterDrawer() {
             <Textarea
               className="min-h-[200px]"
               placeholder="What's on your mind?"
+              value={content}
+              onChange={handleContentChange}
             />
           </div>
 
           <DrawerFooter>
-            <Button className="w-full">Post</Button>
+            <Button className="w-full" onClick={handlePost}>
+              Post
+            </Button>
           </DrawerFooter>
         </div>
       </DrawerContent>
