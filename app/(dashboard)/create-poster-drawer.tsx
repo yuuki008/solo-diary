@@ -74,11 +74,13 @@ export default function CreatePosterDrawer() {
                 {images.map((img) => (
                   <div
                     key={img.id}
-                    className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border"
+                    className="group relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border"
                   >
                     <button
-                      className="absolute top-0 right-0 cursor-pointer z-20 bg-black/50 hover:bg-black/70 rounded-md p-1"
+                      className="absolute cursor-pointer top-1 right-1 z-20 rounded-md p-1 bg-black/50 hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
                       onClick={() => handleRemoveImage(img.id)}
+                      aria-label="Remove image"
+                      title="Remove image"
                     >
                       <X className="w-4 h-4 text-white" />
                     </button>
