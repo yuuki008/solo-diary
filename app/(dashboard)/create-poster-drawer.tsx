@@ -88,7 +88,7 @@ export default function CreatePosterDrawer() {
           </DrawerHeader>
 
           <div className="flex flex-col px-4 gap-4">
-            <div className="flex flex-wrap justify-between gap-y-2">
+            <div className="flex flex-wrap gap-2">
               {images.map((img) => (
                 <div
                   key={img.id}
