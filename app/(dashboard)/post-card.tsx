@@ -2,9 +2,11 @@ import { PostWithImages } from "@/types/database";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-const MAX_DISPLAY_IMAGES = 3;
+const MAX_DISPLAY_IMAGES = 4;
 
 export default function PostCard({ post }: { post: PostWithImages }) {
+  const displayImages = post.images.slice(0, MAX_DISPLAY_IMAGES);
+
   return (
     <div className="flex flex-col gap-4">
       <div
@@ -13,9 +15,9 @@ export default function PostCard({ post }: { post: PostWithImages }) {
           post.images.length === 3 ? "grid-cols-3" : "grid-cols-2"
         )}
       >
-        {post.images.map((image, index) => {
+        {displayImages.map((image, index) => {
           const isLastVisibleImageAndHasMore =
-            index === post.images.length - 1 &&
+            index === displayImages.length - 1 &&
             post.images.length > MAX_DISPLAY_IMAGES;
 
           const remainingImages = post.images.length - MAX_DISPLAY_IMAGES;
@@ -47,7 +49,7 @@ export default function PostCard({ post }: { post: PostWithImages }) {
           );
         })}
       </div>
-      <div className="text-sm">{post.content}</div>
+      <div className="text-sm overflow-wrap break-words">{post.content}</div>
     </div>
   );
 }
