@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -8,9 +12,46 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
+import { generateId } from "@/lib/utils";
+
+type UploadedImage = {
+  id: string;
+  file: File;
+  url: string;
+};
 
 export default function CreatePosterDrawer() {
+  const [images, setImages] = useState<UploadedImage[]>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSelectImages = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const next: UploadedImage[] = [];
+    Array.from(fileList).forEach((file) => {
+      if (!file.type.startsWith("image/")) return;
+      const url = URL.createObjectURL(file);
+      next.push({ id: generateId(), file, url });
+    });
+
+    if (next.length === 0) return;
+    setImages((prev) => [...prev, ...next]);
+
+    event.target.value = "";
+  };
+
+  const handleRemoveImage = (id: string) => {
+    setImages((prev) => prev.filter((img) => img.id !== id));
+  };
+
+  useEffect(() => {
+    return () => {
+      images.forEach((img) => URL.revokeObjectURL(img.url));
+    };
+  }, [images]);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -28,6 +69,47 @@ export default function CreatePosterDrawer() {
           </DrawerHeader>
 
           <div className="flex flex-col px-4">
+            <div className="mb-4">
+              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+                {images.map((img) => (
+                  <div
+                    key={img.id}
+                    className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden border"
+                  >
+                    <button
+                      className="absolute top-0 right-0 cursor-pointer z-20 bg-black/50 hover:bg-black/70 rounded-md p-1"
+                      onClick={() => handleRemoveImage(img.id)}
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                    <Image
+                      src={img.url}
+                      alt="uploaded preview"
+                      fill
+                      sizes="96px"
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-24 h-24 flex-shrink-0 rounded-md border-2 border-dashed border-muted-foreground/40 hover:border-muted-foreground/60 grid place-items-center text-muted-foreground/70 hover:text-muted-foreground transition"
+                  aria-label="Upload images"
+                >
+                  <Plus className="w-6 h-6" />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleSelectImages}
+                  className="hidden"
+                />
+              </div>
+            </div>
             <Textarea
               className="min-h-[200px]"
               placeholder="What's on your mind?"
