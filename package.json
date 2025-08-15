@@ -11,6 +11,8 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
+    "db:studio": "supabase db studio",
+    "db:push": "supabase db push",
     "db:types": "supabase gen types typescript --local > types/supabase.ts",
     "db:types:remote": "supabase gen types typescript --linked > types/supabase.ts"
   },

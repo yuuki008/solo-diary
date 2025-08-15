@@ -27,6 +27,7 @@ export default function CreatePosterDrawer() {
   const { user } = useAuth();
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [content, setContent] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSelectImages = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +56,7 @@ export default function CreatePosterDrawer() {
   };
 
   const handlePost = async () => {
+    setIsPosting(true);
     const res = await createPost(user?.id ?? "", {
       content,
       images: images.map((img) => img.file),
@@ -63,6 +65,7 @@ export default function CreatePosterDrawer() {
 
     setImages([]);
     setContent("");
+    setIsPosting(false);
   };
 
   useEffect(() => {
@@ -139,8 +142,12 @@ export default function CreatePosterDrawer() {
           </div>
 
           <DrawerFooter>
-            <Button className="w-full" onClick={handlePost}>
-              Post
+            <Button
+              className="w-full"
+              onClick={handlePost}
+              disabled={isPosting}
+            >
+              {isPosting ? "Posting..." : "Post"}
             </Button>
           </DrawerFooter>
         </div>
