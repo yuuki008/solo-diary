@@ -133,7 +133,7 @@ export default function CreatePosterDrawer() {
             </div>
 
             <Textarea
-              className="min-h-[200px]"
+              className="min-h-[250px]"
               placeholder="What's on your mind?"
               value={content}
               onChange={handleContentChange}
