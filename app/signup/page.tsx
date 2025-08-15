@@ -10,19 +10,13 @@ import Link from "next/link";
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signUp, authUser, loading } = useAuth();
+  const { signUp } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!loading && authUser) {
-      router.replace("/");
-    }
-  }, [authUser, loading, router]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
