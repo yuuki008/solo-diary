@@ -5,6 +5,7 @@ import CreatePosterDrawer from "./create-poster-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { PostWithImages } from "@/types/database";
+import PostCard from "./post-card";
 
 export default function Home() {
   const { user } = useAuth();
@@ -27,7 +28,7 @@ export default function Home() {
       ) : (
         <div className="flex flex-col gap-4">
           {posts.map((post) => (
-            <div key={post.id}>{post.content}</div>
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       )}
