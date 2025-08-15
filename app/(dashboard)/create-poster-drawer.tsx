@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 
 export default function CreatePosterDrawer() {
@@ -21,16 +20,18 @@ export default function CreatePosterDrawer() {
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-          <DrawerDescription>This action cannot be undone.</DrawerDescription>
-        </DrawerHeader>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        <div className="mx-auto w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>New Post</DrawerTitle>
+          </DrawerHeader>
+
+          <div className="flex flex-col px-4">
+            <Textarea placeholder="What's on your mind?" />
+          </div>
+          <DrawerFooter>
+            <Button className="w-full">Post</Button>
+          </DrawerFooter>
+        </div>
       </DrawerContent>
     </Drawer>
   );
