@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { PostWithImages } from "@/types/database";
 import PostList from "./_components/post-list";
 import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 
 export default function Home() {
   const { user } = useAuth();
@@ -29,9 +31,16 @@ export default function Home() {
   }, [user, date]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 relative">
       <PostList posts={posts} isFetching={isFetching} />
-      <CreatePosterDrawer />
+      <div className="fixed w-full left-0 bottom-4 z-20 flex justify-center">
+        <div className="flex justify-center border rounded-full bg-background/50">
+          <CreatePosterDrawer />
+          <Button className="rounded-full" size="icon" variant="ghost">
+            <Settings className="!w-5 !h-5" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

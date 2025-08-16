@@ -77,11 +77,9 @@ export default function CreatePosterDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <div className="fixed w-full bottom-4 left-0 flex justify-center">
-          <Button className="rounded-full" size="icon">
-            <Plus />
-          </Button>
-        </div>
+        <Button variant="ghost" className="rounded-full" size="icon">
+          <Plus className="!w-5 !h-5" />
+        </Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-md">
