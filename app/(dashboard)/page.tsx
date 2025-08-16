@@ -34,7 +34,7 @@ export default function Home() {
     <div className="flex flex-col gap-4 relative">
       {user && (
         <PostList
-          posts={posts}
+          initialPosts={posts}
           isFetching={isFetching}
           userId={user.id}
           date={date}

@@ -7,22 +7,24 @@ import { getUserPostsClient } from "@/lib/database";
 
 type PostListProps = {
   isFetching: boolean;
-  posts: PostWithImages[];
+  initialPosts: PostWithImages[];
   userId: string;
   date?: string;
 };
 export default function PostList(props: PostListProps) {
-  const [list, setList] = useState<PostWithImages[]>(props.posts);
+  const [allPosts, setAllPosts] = useState<PostWithImages[]>(
+    props.initialPosts
+  );
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setList(props.posts);
+    setAllPosts(props.initialPosts);
     setPage(1);
-    setHasMore(props.posts.length >= 10);
-  }, [props.posts, props.userId, props.date]);
+    setHasMore(props.initialPosts.length >= 10);
+  }, [props.initialPosts, props.userId, props.date]);
 
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
@@ -35,7 +37,7 @@ export default function PostList(props: PostListProps) {
         limit: 10,
       }
     );
-    setList((prev) => [...prev, ...nextPosts]);
+    setAllPosts((prev) => [...prev, ...nextPosts]);
     setPage((p) => p + 1);
     setHasMore(nextHasMore);
     setIsLoadingMore(false);
@@ -63,7 +65,7 @@ export default function PostList(props: PostListProps) {
 
   const groupPostsByDate = useMemo(
     () =>
-      list.reduce((groups: Record<string, PostWithImages[]>, post) => {
+      allPosts.reduce((groups: Record<string, PostWithImages[]>, post) => {
         const date = dayjs(post.created_at).format("YYYY-MM-DD");
         if (!groups[date]) {
           groups[date] = [];
@@ -71,7 +73,7 @@ export default function PostList(props: PostListProps) {
         groups[date].push(post);
         return groups;
       }, {} as Record<string, PostWithImages[]>),
-    [list]
+    [allPosts]
   );
 
   return props.isFetching ? (
@@ -82,7 +84,7 @@ export default function PostList(props: PostListProps) {
       <Skeleton className="w-2/5 h-8" />
       <Skeleton className="w-full h-8" />
     </div>
-  ) : list.length === 0 ? (
+  ) : allPosts.length === 0 ? (
     <div className="text-center text-2xl">No posts yet</div>
   ) : (
     <div className="flex flex-col gap-6">
