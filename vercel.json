@@ -1,0 +1,4 @@
+{
+  "buildCommand": "bun run build:with-migration",
+  "installCommand": "bun install && bun install -g supabase"
+}

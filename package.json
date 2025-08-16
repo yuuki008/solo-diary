@@ -6,6 +6,8 @@
     "dev": "dotenvx run -- next dev --turbopack",
     "build:dev": "dotenvx run -- next build",
     "build": "dotenvx run -f .env.prod -- next build",
+    "build:with-migration": "bun run migrate && bun run build",
+    "migrate": "supabase link --project-ref $SUPABASE_PROJECT_ID && supabase db push",
     "start": "next start",
     "lint": "next lint",
     "db:start": "supabase start",
