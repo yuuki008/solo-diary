@@ -5,7 +5,7 @@ import CreatePosterDrawer from "./create-poster-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { PostWithImages } from "@/types/database";
-import PostCard from "./post-card";
+import PostList from "./_components/post-list";
 
 export default function Home() {
   const { user } = useAuth();
@@ -26,11 +26,7 @@ export default function Home() {
       {posts.length === 0 ? (
         <div className="text-center text-2xl">No posts yet</div>
       ) : (
-        <div className="flex flex-col gap-6">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        <PostList posts={posts} />
       )}
       <CreatePosterDrawer />
     </div>
