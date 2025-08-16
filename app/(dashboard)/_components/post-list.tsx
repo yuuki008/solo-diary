@@ -3,8 +3,10 @@ import dayjs from "dayjs";
 import PostCard from "./post-card";
 import SelectDateDialog from "./select-date";
 import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type PostListProps = {
+  isFetching: boolean;
   posts: PostWithImages[];
 };
 export default function PostList(props: PostListProps) {
@@ -21,7 +23,17 @@ export default function PostList(props: PostListProps) {
     [props.posts]
   );
 
-  return (
+  return props.isFetching ? (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="w-[131.24px] h-8 mx-auto" />
+      <Skeleton className="w-3/5 h-8" />
+      <Skeleton className="w-4/5 h-8" />
+      <Skeleton className="w-2/5 h-8" />
+      <Skeleton className="w-full h-8" />
+    </div>
+  ) : props.posts.length === 0 ? (
+    <div className="text-center text-2xl">No posts yet</div>
+  ) : (
     <div className="flex flex-col gap-6">
       {Object.entries(groupPostsByDate).map(([date, posts]) => (
         <div key={date} className="relative flex flex-col gap-4">

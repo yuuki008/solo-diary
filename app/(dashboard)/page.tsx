@@ -14,13 +14,15 @@ export default function Home() {
   const date = searchParams.get("date") ?? undefined;
 
   const [posts, setPosts] = useState<PostWithImages[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
     const fetchPosts = async () => {
+      setIsFetching(true);
       const posts = await getUserPosts({ userId: user.id, date });
-
+      setIsFetching(false);
       setPosts(posts);
     };
     fetchPosts();
@@ -28,11 +30,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-4">
-      {posts.length === 0 ? (
-        <div className="text-center text-2xl">No posts yet</div>
-      ) : (
-        <PostList posts={posts} />
-      )}
+      <PostList posts={posts} isFetching={isFetching} />
       <CreatePosterDrawer />
     </div>
   );
