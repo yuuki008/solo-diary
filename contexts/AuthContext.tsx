@@ -76,6 +76,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       options: {
+        // 認証メールのリンク先（コード交換用）
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           username: username,
         },

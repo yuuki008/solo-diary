@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
 export default function SignupPage() {
-  const router = useRouter();
   const { signUp } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -17,6 +15,7 @@ export default function SignupPage() {
   const [username, setUsername] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +23,9 @@ export default function SignupPage() {
     setSubmitting(true);
     try {
       await signUp(email, password, username);
-      router.replace("/");
+      setInfo(
+        "確認メールを送信しました。メール内のリンクを開いて認証を完了してください。"
+      );
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "サインアップに失敗しました";
@@ -64,6 +65,11 @@ export default function SignupPage() {
         {error && (
           <p className="text-sm text-red-600" role="alert">
             {error}
+          </p>
+        )}
+        {info && (
+          <p className="text-sm text-green-600" role="status">
+            {info}
           </p>
         )}
 
