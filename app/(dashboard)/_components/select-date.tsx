@@ -11,16 +11,24 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 type SelectDateDialogProps = {
   date: string;
 };
 
 export default function SelectDateDialog({ date }: SelectDateDialogProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    dayjs(date).toDate()
-  );
+
+  const selectedDate = dayjs(date).toDate();
+
+  const handleSelectDate = (date: Date | undefined) => {
+    if (!date) return;
+
+    router.push(`/?date=${dayjs(date).format("YYYY-MM-DD")}`);
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,10 +48,7 @@ export default function SelectDateDialog({ date }: SelectDateDialogProps) {
           mode="single"
           selected={selectedDate}
           captionLayout="dropdown"
-          onSelect={(date) => {
-            setSelectedDate(date);
-            setOpen(false);
-          }}
+          onSelect={handleSelectDate}
         />
       </PopoverContent>
     </Popover>

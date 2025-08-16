@@ -6,20 +6,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { PostWithImages } from "@/types/database";
 import PostList from "./_components/post-list";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+
   const [posts, setPosts] = useState<PostWithImages[]>([]);
 
   useEffect(() => {
     if (!user) return;
 
     const fetchPosts = async () => {
-      const posts = await getUserPosts(user.id);
+      const date = searchParams.get("date") ?? undefined;
+      const posts = await getUserPosts({ userId: user.id, date });
+
       setPosts(posts);
     };
     fetchPosts();
-  }, [user]);
+  }, [user, searchParams]);
 
   return (
     <div className="flex flex-col gap-4">

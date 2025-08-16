@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { supabase } from "./supabase/client";
 import {
   PostUpdate,
@@ -6,10 +7,13 @@ import {
   Post,
 } from "@/types/database";
 
-export const getUserPosts = async (
-  userId: string,
-  limit?: number
-): Promise<PostWithImages[]> => {
+export const getUserPosts = async (args: {
+  userId: string;
+  date?: string;
+  limit?: number;
+}): Promise<PostWithImages[]> => {
+  const { userId, date, limit } = args;
+
   let query = supabase
     .from("posts")
     .select(
@@ -20,6 +24,11 @@ export const getUserPosts = async (
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
+
+  if (date) {
+    const endOfDay = dayjs(date).endOf("day").toISOString();
+    query = query.lte("created_at", endOfDay);
+  }
 
   if (limit) {
     query = query.limit(limit);
