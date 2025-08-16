@@ -1,8 +1,7 @@
 import { PostWithImages } from "@/types/database";
 import dayjs from "dayjs";
 import PostCard from "./post-card";
-import { Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import SelectDateDialog from "./select-date";
 
 type PostListProps = {
   posts: PostWithImages[];
@@ -24,13 +23,7 @@ export default function PostList(props: PostListProps) {
     <div className="flex flex-col gap-6">
       {Object.entries(groupPostsByDate).map(([date, posts]) => (
         <div key={date} className="relative flex flex-col gap-4">
-          <Button
-            className="text-xs sticky top-5 z-20 w-fit mx-auto"
-            variant="secondary"
-          >
-            <Calendar className="w-4 h-4" />
-            {date}
-          </Button>
+          <SelectDateDialog date={date} />
           <div className="flex flex-col gap-4">
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
