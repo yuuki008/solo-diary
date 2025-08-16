@@ -1,30 +1,43 @@
+"use client";
+
 import { PostWithImages } from "@/types/database";
 import dayjs from "dayjs";
 import PostCard from "./post-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserPostsClient } from "@/lib/database";
+import { useSearchParams } from "next/navigation";
 
 type PostListProps = {
-  isFetching: boolean;
-  initialPosts: PostWithImages[];
   userId: string;
-  date?: string;
 };
 export default function PostList(props: PostListProps) {
-  const [allPosts, setAllPosts] = useState<PostWithImages[]>(
-    props.initialPosts
-  );
+  const searchParams = useSearchParams();
+  const date = searchParams.get("date") ?? undefined;
+
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [allPosts, setAllPosts] = useState<PostWithImages[]>([]);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setAllPosts(props.initialPosts);
-    setPage(1);
-    setHasMore(props.initialPosts.length >= 10);
-  }, [props.initialPosts, props.userId, props.date]);
+    const fetchPosts = async () => {
+      const { posts, hasMore } = await getUserPostsClient({
+        userId: props.userId,
+        date,
+        limit: 10,
+        page: 1,
+      });
+
+      setAllPosts(posts);
+      setPage(1);
+      setHasMore(hasMore);
+      setIsFetching(false);
+    };
+    fetchPosts();
+  }, [props.userId, date]);
 
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
@@ -32,7 +45,7 @@ export default function PostList(props: PostListProps) {
     const { posts: nextPosts, hasMore: nextHasMore } = await getUserPostsClient(
       {
         userId: props.userId,
-        date: props.date,
+        date,
         page,
         limit: 10,
       }
@@ -41,7 +54,7 @@ export default function PostList(props: PostListProps) {
     setPage((p) => p + 1);
     setHasMore(nextHasMore);
     setIsLoadingMore(false);
-  }, [isLoadingMore, hasMore, props.userId, props.date, page]);
+  }, [isLoadingMore, hasMore, props.userId, date, page]);
 
   useEffect(() => {
     const target = sentinelRef.current;
@@ -50,7 +63,7 @@ export default function PostList(props: PostListProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting && !props.isFetching) {
+        if (entry.isIntersecting && !isFetching) {
           loadMore();
         }
       },
@@ -61,7 +74,7 @@ export default function PostList(props: PostListProps) {
     return () => {
       observer.disconnect();
     };
-  }, [loadMore, props.isFetching]);
+  }, [loadMore, isFetching]);
 
   const groupPostsByDate = useMemo(
     () =>
@@ -76,7 +89,7 @@ export default function PostList(props: PostListProps) {
     [allPosts]
   );
 
-  return props.isFetching ? (
+  return isFetching ? (
     <div className="flex flex-col gap-4">
       <Skeleton className="w-[131.24px] h-8 mx-auto" />
       <Skeleton className="w-3/5 h-8" />
@@ -103,7 +116,8 @@ export default function PostList(props: PostListProps) {
       <div ref={sentinelRef} />
       {isLoadingMore && (
         <div className="flex flex-col gap-4 mt-2">
-          <Skeleton className="w-3/5 h-6 mx-auto" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
           <Skeleton className="w-full h-8" />
         </div>
       )}
