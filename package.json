@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "dotenvx run -- next dev --turbopack",
-    "build": "next build",
+    "build:dev": "dotenv run -- next build",
+    "build": "dotenv run -f .env.prod -- next build",
     "start": "next start",
     "lint": "next lint",
     "db:start": "supabase start",
