@@ -23,7 +23,7 @@ export default function Home() {
 
     const fetchPosts = async () => {
       setIsFetching(true);
-      const posts = await getUserPosts({ userId: user.id, date });
+      const posts = await getUserPosts({ userId: user.id, date, limit: 10 });
       setIsFetching(false);
       setPosts(posts);
     };
@@ -32,7 +32,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-4 relative">
-      <PostList posts={posts} isFetching={isFetching} />
+      {user && (
+        <PostList
+          posts={posts}
+          isFetching={isFetching}
+          userId={user.id}
+          date={date}
+        />
+      )}
       <div className="fixed w-full left-0 bottom-4 z-20 flex justify-center">
         <div className="flex justify-center border rounded-full bg-background/80">
           <CreatePosterDrawer />

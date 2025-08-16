@@ -7,6 +7,48 @@ import {
   Post,
 } from "@/types/database";
 
+export const getUserPostsClient = async (args: {
+  userId: string;
+  page?: number;
+  limit?: number;
+  date?: string;
+}): Promise<{ posts: PostWithImages[]; hasMore: boolean }> => {
+  const { userId, page = 0, limit = 10, date } = args;
+
+  const from = page * limit;
+  const to = from + limit - 1;
+
+  let query = supabase
+    .from("posts")
+    .select(
+      `
+      *,
+      images (*)
+    `,
+      { count: "exact" }
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (date) {
+    const endOfDay = dayjs(date).endOf("day").toISOString();
+    query = query.lte("created_at", endOfDay);
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    console.error("Error fetching user posts (paginated):", error);
+    return { posts: [], hasMore: false };
+  }
+
+  const posts = (data || []) as PostWithImages[];
+  const hasMore = typeof count === "number" ? from + limit < count : false;
+
+  return { posts, hasMore };
+};
+
 export const getUserPosts = async (args: {
   userId: string;
   date?: string;
