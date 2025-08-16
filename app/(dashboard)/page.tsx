@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 export default function Home() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
+  const date = searchParams.get("date") ?? undefined;
 
   const [posts, setPosts] = useState<PostWithImages[]>([]);
 
@@ -18,13 +19,12 @@ export default function Home() {
     if (!user) return;
 
     const fetchPosts = async () => {
-      const date = searchParams.get("date") ?? undefined;
       const posts = await getUserPosts({ userId: user.id, date });
 
       setPosts(posts);
     };
     fetchPosts();
-  }, [user, searchParams]);
+  }, [user, date]);
 
   return (
     <div className="flex flex-col gap-4">

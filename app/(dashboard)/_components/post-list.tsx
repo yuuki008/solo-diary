@@ -2,21 +2,23 @@ import { PostWithImages } from "@/types/database";
 import dayjs from "dayjs";
 import PostCard from "./post-card";
 import SelectDateDialog from "./select-date";
+import { useMemo } from "react";
 
 type PostListProps = {
   posts: PostWithImages[];
 };
 export default function PostList(props: PostListProps) {
-  const groupPostsByDate = props.posts.reduce(
-    (groups: Record<string, PostWithImages[]>, post) => {
-      const date = dayjs(post.created_at).format("YYYY-MM-DD");
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(post);
-      return groups;
-    },
-    {} as Record<string, PostWithImages[]>
+  const groupPostsByDate = useMemo(
+    () =>
+      props.posts.reduce((groups: Record<string, PostWithImages[]>, post) => {
+        const date = dayjs(post.created_at).format("YYYY-MM-DD");
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(post);
+        return groups;
+      }, {} as Record<string, PostWithImages[]>),
+    [props.posts]
   );
 
   return (
