@@ -34,7 +34,7 @@ export default function Home() {
     <div className="flex flex-col gap-4 relative">
       <PostList posts={posts} isFetching={isFetching} />
       <div className="fixed w-full left-0 bottom-4 z-20 flex justify-center">
-        <div className="flex justify-center border rounded-full bg-background/50">
+        <div className="flex justify-center border rounded-full bg-background/80">
           <CreatePosterDrawer />
           <Button className="rounded-full" size="icon" variant="ghost">
             <Settings className="!w-5 !h-5" />
