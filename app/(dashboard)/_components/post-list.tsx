@@ -17,44 +17,53 @@ export default function PostList(props: PostListProps) {
 
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [allPosts, setAllPosts] = useState<PostWithImages[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [nextPage, setNextPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const { posts, hasMore } = await getUserPostsClient({
+  const fetchPage = useCallback(
+    async (pageIndex: number) =>
+      getUserPostsClient({
         userId: props.userId,
         date,
         limit: 10,
-        page: 1,
-      });
+        page: pageIndex,
+      }),
+    [props.userId, date]
+  );
 
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      setIsFetching(true);
+      setAllPosts([]);
+      setHasMore(true);
+      setNextPage(0);
+      const { posts, hasMore } = await fetchPage(0);
+      if (cancelled) return;
       setAllPosts(posts);
-      setPage(1);
       setHasMore(hasMore);
+      setNextPage(1);
       setIsFetching(false);
     };
-    fetchPosts();
-  }, [props.userId, date]);
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchPage]);
 
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
     setIsLoadingMore(true);
-    const { posts: nextPosts, hasMore: nextHasMore } = await getUserPostsClient(
-      {
-        userId: props.userId,
-        date,
-        page,
-        limit: 10,
-      }
+    const { posts: nextPosts, hasMore: nextHasMore } = await fetchPage(
+      nextPage
     );
     setAllPosts((prev) => [...prev, ...nextPosts]);
-    setPage((p) => p + 1);
+    setNextPage((p) => p + 1);
     setHasMore(nextHasMore);
     setIsLoadingMore(false);
-  }, [isLoadingMore, hasMore, props.userId, date, page]);
+  }, [isLoadingMore, hasMore, fetchPage, nextPage]);
 
   useEffect(() => {
     const target = sentinelRef.current;
@@ -89,14 +98,16 @@ export default function PostList(props: PostListProps) {
     [allPosts]
   );
 
-  return isFetching ? (
+  const SkeletonRows = ({ rows = 5 }: { rows?: number }) => (
     <div className="flex flex-col gap-4">
-      <Skeleton className="w-[131.24px] h-8 mx-auto" />
-      <Skeleton className="w-3/5 h-8" />
-      <Skeleton className="w-4/5 h-8" />
-      <Skeleton className="w-2/5 h-8" />
-      <Skeleton className="w-full h-8" />
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="w-full h-8" />
+      ))}
     </div>
+  );
+
+  return isFetching ? (
+    <SkeletonRows rows={5} />
   ) : allPosts.length === 0 ? (
     <div className="text-center text-2xl">No posts yet</div>
   ) : (
@@ -115,10 +126,8 @@ export default function PostList(props: PostListProps) {
       ))}
       <div ref={sentinelRef} />
       {isLoadingMore && (
-        <div className="flex flex-col gap-4 mt-2">
-          <Skeleton className="w-full h-8" />
-          <Skeleton className="w-full h-8" />
-          <Skeleton className="w-full h-8" />
+        <div className="mt-2">
+          <SkeletonRows rows={3} />
         </div>
       )}
     </div>
