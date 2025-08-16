@@ -77,7 +77,12 @@ export default function CreatePosterDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="ghost" className="rounded-full" size="icon">
+        <Button
+          variant="ghost"
+          className="rounded-full"
+          title="Create post"
+          size="icon"
+        >
           <Plus className="!w-5 !h-5" />
         </Button>
       </DrawerTrigger>
