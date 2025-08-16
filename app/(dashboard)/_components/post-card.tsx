@@ -12,7 +12,11 @@ export default function PostCard({ post }: { post: PostWithImages }) {
       <div
         className={cn(
           "grid w-full gap-1 rounded overflow-hidden mb-4",
-          post.images.length === 3 ? "grid-cols-3" : "grid-cols-2"
+          post.images.length === 1
+            ? "grid-cols-1"
+            : post.images.length === 3
+            ? "grid-cols-3"
+            : "grid-cols-2"
         )}
       >
         {displayImages.map((image, index) => {

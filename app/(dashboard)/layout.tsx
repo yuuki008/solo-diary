@@ -3,5 +3,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="max-w-screen-sm mx-auto p-8">{children}</div>;
+  return <div className="max-w-lg mx-auto p-8">{children}</div>;
 }
