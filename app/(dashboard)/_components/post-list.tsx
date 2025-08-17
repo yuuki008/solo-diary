@@ -125,11 +125,7 @@ export default function PostList(props: PostListProps) {
         </div>
       ))}
       <div ref={sentinelRef} />
-      {isLoadingMore && (
-        <div className="mt-2">
-          <SkeletonRows rows={3} />
-        </div>
-      )}
+      {isLoadingMore && <SkeletonRows rows={3} />}
     </div>
   );
 }
