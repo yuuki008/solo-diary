@@ -1,6 +1,6 @@
 "use client";
 
-import CreatePosterDrawer from "./create-poster-drawer";
+import CreatePosterDrawer from "./_components/create-poster-drawer";
 import { useAuth } from "@/contexts/AuthContext";
 import PostList from "./_components/post-list";
 import { Button } from "@/components/ui/button";
