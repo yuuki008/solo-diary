@@ -9,12 +9,14 @@ export type Post = Database["public"]["Tables"]["posts"]["Row"];
 export type PostInsert = Database["public"]["Tables"]["posts"]["Insert"];
 export type PostUpdate = Database["public"]["Tables"]["posts"]["Update"];
 
-export type Image = Database["public"]["Tables"]["images"]["Row"];
-export type ImageInsert = Database["public"]["Tables"]["images"]["Insert"];
+export type PostAttachment =
+  Database["public"]["Tables"]["post_attachments"]["Row"];
+export type PostAttachmentInsert =
+  Database["public"]["Tables"]["post_attachments"]["Insert"];
 
 // 関連データを含む複合型
-export type PostWithImages = Post & {
-  images: Image[];
+export type PostWithAttachments = Post & {
+  post_attachments: PostAttachment[];
 };
 
 export type PostWithUser = Post & {
@@ -23,7 +25,7 @@ export type PostWithUser = Post & {
 
 export type PostWithAll = Post & {
   users: User;
-  images: Image[];
+  post_attachments: PostAttachment[];
 };
 
 // フォーム用の型
@@ -40,5 +42,5 @@ export type SignInData = {
 
 export type CreatePostData = {
   content: string;
-  images?: File[];
+  attachments?: File[];
 };

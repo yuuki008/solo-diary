@@ -1,6 +1,6 @@
 "use client";
 
-import { PostWithImages } from "@/types/database";
+import { PostWithAttachments } from "@/types/database";
 import dayjs from "dayjs";
 import PostCard from "./post-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -16,7 +16,7 @@ export default function PostList(props: PostListProps) {
   const date = searchParams.get("date") ?? undefined;
 
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [allPosts, setAllPosts] = useState<PostWithImages[]>([]);
+  const [allPosts, setAllPosts] = useState<PostWithAttachments[]>([]);
   const [nextPage, setNextPage] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
@@ -87,14 +87,14 @@ export default function PostList(props: PostListProps) {
 
   const groupPostsByDate = useMemo(
     () =>
-      allPosts.reduce((groups: Record<string, PostWithImages[]>, post) => {
+      allPosts.reduce((groups: Record<string, PostWithAttachments[]>, post) => {
         const date = dayjs(post.created_at).format("YYYY-MM-DD");
         if (!groups[date]) {
           groups[date] = [];
         }
         groups[date].push(post);
         return groups;
-      }, {} as Record<string, PostWithImages[]>),
+      }, {} as Record<string, PostWithAttachments[]>),
     [allPosts]
   );
 

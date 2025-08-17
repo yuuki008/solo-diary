@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { supabase } from "./supabase/client";
 import {
   PostUpdate,
-  PostWithImages,
+  PostWithAttachments,
   CreatePostData,
   Post,
 } from "@/types/database";
@@ -12,7 +12,7 @@ export const getUserPostsClient = async (args: {
   page?: number;
   limit?: number;
   date?: string;
-}): Promise<{ posts: PostWithImages[]; hasMore: boolean }> => {
+}): Promise<{ posts: PostWithAttachments[]; hasMore: boolean }> => {
   const { userId, page = 0, limit = 10, date } = args;
 
   const from = page * limit;
@@ -23,7 +23,7 @@ export const getUserPostsClient = async (args: {
     .select(
       `
       *,
-      images (*)
+      post_attachments (*)
     `,
       { count: "exact" }
     )
@@ -43,7 +43,7 @@ export const getUserPostsClient = async (args: {
     return { posts: [], hasMore: false };
   }
 
-  const posts = (data || []) as PostWithImages[];
+  const posts = (data || []) as PostWithAttachments[];
   const hasMore = typeof count === "number" ? from + limit < count : false;
 
   return { posts, hasMore };
@@ -53,7 +53,7 @@ export const getUserPosts = async (args: {
   userId: string;
   date?: string;
   limit?: number;
-}): Promise<PostWithImages[]> => {
+}): Promise<PostWithAttachments[]> => {
   const { userId, date, limit } = args;
 
   let query = supabase
@@ -61,7 +61,7 @@ export const getUserPosts = async (args: {
     .select(
       `
       *,
-      images (*)
+      post_attachments (*)
     `
     )
     .eq("user_id", userId)
@@ -78,7 +78,7 @@ export const getUserPosts = async (args: {
 
   const { data, error } = await query;
   if (error) throw error;
-  return data as PostWithImages[];
+  return data as PostWithAttachments[];
 };
 
 export const getPost = async (postId: number): Promise<Post> => {
@@ -87,7 +87,7 @@ export const getPost = async (postId: number): Promise<Post> => {
     .select(
       `
       *,
-      images (*),
+      post_attachments (*),
       users (*)
     `
     )
@@ -113,37 +113,47 @@ export const createPost = async (
 
   if (postError) throw postError;
 
-  const imageUrls: string[] = [];
-  if (postData.images && postData.images.length > 0) {
-    for (const image of postData.images) {
-      const fileExt = image.name.split(".").pop();
+  const attachmentUrls: { url: string; mime_type: string }[] = [];
+  if (postData.attachments && postData.attachments.length > 0) {
+    for (const file of postData.attachments) {
+      const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-      const filePath = `post-images/${fileName}`;
+      const topLevel = (file.type || "application/octet-stream").split("/")[0];
+      const folder =
+        topLevel === "image"
+          ? "images"
+          : topLevel === "video"
+          ? "videos"
+          : topLevel === "audio"
+          ? "audios"
+          : "files";
+      const filePath = `post-attachments/${folder}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("images")
-        .upload(filePath, image);
+        .from("post-attachments")
+        .upload(filePath, file, { contentType: file.type });
 
       if (uploadError) throw uploadError;
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from("images").getPublicUrl(filePath);
+      } = supabase.storage.from("post-attachments").getPublicUrl(filePath);
 
-      imageUrls.push(publicUrl);
+      attachmentUrls.push({ url: publicUrl, mime_type: file.type });
     }
 
-    if (imageUrls.length > 0) {
-      const imageInserts = imageUrls.map((url) => ({
+    if (attachmentUrls.length > 0) {
+      const inserts = attachmentUrls.map((a) => ({
         post_id: post.id,
-        url,
+        url: a.url,
+        mime_type: a.mime_type,
       }));
 
-      const { error: imageError } = await supabase
-        .from("images")
-        .insert(imageInserts);
+      const { error: insertError } = await supabase
+        .from("post_attachments")
+        .insert(inserts);
 
-      if (imageError) throw imageError;
+      if (insertError) throw insertError;
     }
   }
 
@@ -166,16 +176,20 @@ export const updatePost = async (
 };
 
 export const deletePost = async (postId: number): Promise<void> => {
-  const { data: images } = await supabase
-    .from("images")
+  const { data: attachments } = await supabase
+    .from("post_attachments")
     .select("url")
     .eq("post_id", postId);
 
-  if (images) {
-    for (const image of images) {
-      const path = image.url.split("/").pop();
-      if (path) {
-        await supabase.storage.from("images").remove([`post-images/${path}`]);
+  if (attachments) {
+    for (const att of attachments) {
+      const url = att.url;
+      const idx = url.indexOf("/post-attachments/");
+      if (idx >= 0) {
+        const path = url.substring(idx + 1 + "post-attachments".length + 1); // after bucket name
+        if (path) {
+          await supabase.storage.from("post-attachments").remove([path]);
+        }
       }
     }
   }

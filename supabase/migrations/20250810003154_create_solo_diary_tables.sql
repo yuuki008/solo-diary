@@ -26,14 +26,16 @@ create table if not exists public.posts (
   constraint content_max_length check (char_length(content) <= 10000)
 );
 
--- images テーブル
-create table if not exists public.images (
+-- post_attachments テーブル（画像/動画/音声などの添付ファイル）
+create table if not exists public.post_attachments (
   id bigserial primary key,
   post_id bigint references public.posts(id) on delete cascade not null,
   url text not null,
+  mime_type text not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   
-  constraint url_not_empty check (char_length(trim(url)) > 0)
+  constraint url_not_empty check (char_length(trim(url)) > 0),
+  constraint mime_type_not_empty check (char_length(trim(mime_type)) > 0)
 );
 
 -- インデックスの作成
@@ -41,12 +43,12 @@ create index if not exists users_username_idx on public.users(username);
 create index if not exists posts_user_id_idx on public.posts(user_id);
 create index if not exists posts_created_at_idx on public.posts(created_at desc);
 create index if not exists posts_user_created_idx on public.posts(user_id, created_at desc);
-create index if not exists images_post_id_idx on public.images(post_id);
+create index if not exists post_attachments_post_id_idx on public.post_attachments(post_id);
 
 -- RLS (Row Level Security) の有効化
 alter table public.users enable row level security;
 alter table public.posts enable row level security;
-alter table public.images enable row level security;
+alter table public.post_attachments enable row level security;
 
 -- users テーブルのRLSポリシー
 create policy "Users can view their own profile" 
@@ -74,33 +76,33 @@ create policy "Users can delete their own posts"
   on public.posts for delete 
   using (auth.uid() = user_id);
 
--- images テーブルのRLSポリシー
-create policy "Users can view images of their own posts" 
-  on public.images for select 
+-- post_attachments テーブルのRLSポリシー
+create policy "Users can view attachments of their own posts" 
+  on public.post_attachments for select 
   using (
     exists (
       select 1 from public.posts 
-      where posts.id = images.post_id 
+      where posts.id = post_attachments.post_id 
       and posts.user_id = auth.uid()
     )
   );
 
-create policy "Users can insert images to their own posts" 
-  on public.images for insert 
+create policy "Users can insert attachments to their own posts" 
+  on public.post_attachments for insert 
   with check (
     exists (
       select 1 from public.posts 
-      where posts.id = images.post_id 
+      where posts.id = post_attachments.post_id 
       and posts.user_id = auth.uid()
     )
   );
 
-create policy "Users can delete images from their own posts" 
-  on public.images for delete 
+create policy "Users can delete attachments from their own posts" 
+  on public.post_attachments for delete 
   using (
     exists (
       select 1 from public.posts 
-      where posts.id = images.post_id 
+      where posts.id = post_attachments.post_id 
       and posts.user_id = auth.uid()
     )
   );
