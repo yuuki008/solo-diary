@@ -12,7 +12,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, X } from "lucide-react";
+import { AudioLinesIcon, Plus, VideoIcon, X } from "lucide-react";
 import { generateId } from "@/lib/utils";
 import { createPost } from "@/lib/database";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,6 +21,33 @@ type UploadedAttachment = {
   id: string;
   file: File;
   url: string;
+};
+
+const Video = ({ src }: { src: string }) => {
+  return (
+    <div className="w-full h-full relative">
+      <video
+        src={src}
+        className="w-full h-full object-cover"
+        muted
+        preload="metadata"
+      />
+      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-background/50">
+        <VideoIcon className="w-7 h-7 text-white" />
+      </div>
+    </div>
+  );
+};
+
+const Audio = ({ src }: { src: string }) => {
+  return (
+    <div className="w-full h-full relative">
+      <audio src={src} className="w-full" controls preload="metadata" />
+      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-background/50">
+        <AudioLinesIcon className="w-7 h-7 text-white" />
+      </div>
+    </div>
+  );
 };
 
 export default function CreatePosterDrawer() {
@@ -125,21 +152,11 @@ export default function CreatePosterDrawer() {
                       unoptimized
                     />
                   ) : att.file.type.startsWith("video/") ? (
-                    <video
-                      src={att.url}
-                      className="w-full h-full object-cover"
-                      muted
-                      preload="metadata"
-                    />
+                    <Video src={att.url} />
+                  ) : att.file.type.startsWith("audio/") ? (
+                    <Audio src={att.url} />
                   ) : (
-                    <div className="w-full h-full grid place-items-center bg-muted p-2">
-                      <audio
-                        src={att.url}
-                        className="w-full"
-                        controls
-                        preload="metadata"
-                      />
-                    </div>
+                    <></>
                   )}
                 </div>
               ))}
