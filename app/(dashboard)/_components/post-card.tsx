@@ -47,9 +47,13 @@ export default function PostCard({ post }: { post: PostWithAttachments }) {
                   className="object-cover w-full h-full"
                 />
               ) : att.mime_type.startsWith("video/") ? (
-                <video className="object-cover w-full h-full" controls muted>
-                  <source src={att.url} type={att.mime_type} />
-                </video>
+                <video
+                  src={att.url}
+                  className="object-cover w-full h-full"
+                  muted
+                  autoPlay
+                  preload="metadata"
+                />
               ) : att.mime_type.startsWith("audio/") ? (
                 <div className="w-full h-full grid place-items-center bg-muted">
                   <audio controls className="w-11/12">
