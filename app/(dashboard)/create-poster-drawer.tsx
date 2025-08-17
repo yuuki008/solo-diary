@@ -125,14 +125,20 @@ export default function CreatePosterDrawer() {
                       unoptimized
                     />
                   ) : att.file.type.startsWith("video/") ? (
-                    <video className="w-full h-full object-cover" muted>
-                      <source src={att.url} type={att.file.type} />
-                    </video>
+                    <video
+                      src={att.url}
+                      className="w-full h-full object-cover"
+                      muted
+                      preload="metadata"
+                    />
                   ) : (
                     <div className="w-full h-full grid place-items-center bg-muted p-2">
-                      <audio controls className="w-full">
-                        <source src={att.url} type={att.file.type} />
-                      </audio>
+                      <audio
+                        src={att.url}
+                        className="w-full"
+                        controls
+                        preload="metadata"
+                      />
                     </div>
                   )}
                 </div>
