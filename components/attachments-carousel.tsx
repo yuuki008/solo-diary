@@ -77,13 +77,15 @@ export default function AttachmentsCarousel({
                 <video
                   src={att.url}
                   className="object-cover w-full h-full"
-                  autoPlay
                   loop
                   playsInline
-                  muted={index + 1 !== current}
                 />
               ) : att.mime_type.startsWith("audio/") ? (
-                <audio src={att.url} className="object-cover w-full h-full" />
+                <audio
+                  src={att.url}
+                  className="object-cover w-full h-full"
+                  controls
+                />
               ) : (
                 <div className="flex items-center justify-center w-full h-full">
                   <p className="text-sm text-muted-foreground">
