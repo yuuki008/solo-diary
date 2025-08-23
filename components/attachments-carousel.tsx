@@ -6,8 +6,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import { useState } from "react";
@@ -95,14 +93,6 @@ export default function AttachmentsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious
-          variant="ghost"
-          className="absolute left-1 top-1/2 -translate-y-1/2"
-        />
-        <CarouselNext
-          variant="ghost"
-          className="absolute right-1 top-1/2 -translate-y-1/2"
-        />
       </Carousel>
 
       {count > 1 && (
