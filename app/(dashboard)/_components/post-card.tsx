@@ -1,7 +1,7 @@
 "use client";
 
 import AttachmentsCarousel from "@/components/attachments-carousel";
-import { formatDatetime, formatTime } from "@/lib/utils";
+import { formatTime } from "@/lib/utils";
 import { PostWithAttachments } from "@/types/database";
 import { Trash2 } from "lucide-react";
 import { deletePost } from "@/lib/database";
