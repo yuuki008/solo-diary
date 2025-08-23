@@ -33,15 +33,15 @@ export default function PostCard({
 
   return (
     <div className="flex flex-col border-b pb-4 relative group">
+      <div className="absolute inset-0 bg-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 duration-300 pointer-events-none" />
       <button
         onClick={handleDelete}
         disabled={isDeleting}
-        className="absolute cursor-pointer top-1 right-1 z-10 bg-background/50 hover:bg-background/80 p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-60"
+        className="absolute cursor-pointer top-1 right-1 z-30 bg-background/50 hover:bg-background/80 p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-60"
         aria-label="delete post"
       >
         <Trash2 className="w-4 h-4" />
       </button>
-      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
       <AttachmentsCarousel attachments={post.post_attachments} />
       <div className="text-sm overflow-wrap break-words mt-4">
         {post.content}
