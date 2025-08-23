@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { AudioLinesIcon, Plus, Send, VideoIcon, X } from "lucide-react";
 import { createPost } from "@/lib/database";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import { generateId } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function CreatePostForm() {
   const { user } = useAuth();
@@ -77,9 +77,9 @@ export default function CreatePostForm() {
   }, [attachments]);
 
   return (
-    <div className="relative max-w-lg w-full mx-4">
+    <div className="relative max-w-lg w-full mx-4 border rounded-lg p-4">
       {attachments.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {attachments.map((att) => (
             <div
               key={att.id}
@@ -129,42 +129,43 @@ export default function CreatePostForm() {
         </div>
       )}
       <form onSubmit={handleSubmit} className="w-full">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,video/*,audio/*"
-          multiple
-          onChange={handleFilesSelected}
-          className="hidden"
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What are you thinking?"
+          disabled={!user || isPosting}
+          className="w-full min-h-10 border-input placeholder:text-muted-foreground field-sizing-content outline-none resize-none"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              // 単純な送信（改行は Shift+Enter）
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
         />
 
-        <div className="relative">
-          <button
+        <div className="flex items-center justify-between">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*,audio/*"
+            multiple
+            onChange={handleFilesSelected}
+            className="hidden"
+          />
+
+          <Button
             type="button"
             onClick={openFilePicker}
             title="Add file"
             aria-label="Add file"
-            className="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition"
+            variant="outline"
+            className="cursor-pointer w-9 h-9"
           >
             <Plus className="w-5 h-5" />
-          </button>
+          </Button>
 
-          <Input
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What are you thinking?"
-            className="pl-12 pr-12 h-12 rounded-full bg-muted/50"
-            disabled={!user || isPosting}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                // 単純な送信（改行は Shift+Enter）
-                e.preventDefault();
-                handleSubmit();
-              }
-            }}
-          />
-
-          <button
+          <Button
             type="submit"
             disabled={
               !user ||
@@ -173,10 +174,10 @@ export default function CreatePostForm() {
             }
             title="Post"
             aria-label="Post"
-            className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition disabled:opacity-50"
+            className="cursor-pointer w-9 h-9"
           >
             <Send className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
       </form>
     </div>
