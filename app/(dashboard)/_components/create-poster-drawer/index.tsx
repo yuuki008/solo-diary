@@ -113,7 +113,7 @@ export default function CreatePosterDrawer() {
     <Drawer>
       <DrawerTrigger asChild>
         <Button
-          variant="ghost"
+          variant="outline"
           className="rounded-full"
           title="Create post"
           size="icon"
