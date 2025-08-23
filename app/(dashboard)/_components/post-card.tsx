@@ -42,7 +42,7 @@ export default function PostCard({
         <Trash2 className="w-4 h-4" />
       </button>
       <AttachmentsCarousel attachments={post.post_attachments} />
-      <div className="text-sm overflow-wrap break-words mt-4">
+      <div className="text-sm overflow-wrap whitespace-pre-wrap break-words mt-4">
         {post.content}
       </div>
       <div className="text-xs text-muted-foreground ml-auto mt-1">
