@@ -22,7 +22,7 @@ export default function AttachmentsCarousel({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const count = attachments.length;
   const thumbnailsContainerRef = useRef<HTMLDivElement>(null);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -41,7 +41,6 @@ export default function AttachmentsCarousel({
       return;
     }
 
-    setCount(api.scrollSnapList().length);
     const initialIndex = api.selectedScrollSnap();
     setCurrent(initialIndex + 1);
     // 初期表示時にもサムネイルを中央に寄せる
@@ -53,6 +52,8 @@ export default function AttachmentsCarousel({
       centerThumbnail(idx);
     });
   }, [api]);
+
+  if (count === 0) return null;
 
   return (
     <div>
