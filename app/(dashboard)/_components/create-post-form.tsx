@@ -144,7 +144,7 @@ export default function CreatePostForm() {
             onClick={openFilePicker}
             title="Add file"
             aria-label="Add file"
-            className="absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition"
+            className="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition"
           >
             <Plus className="w-5 h-5" />
           </button>
@@ -173,7 +173,7 @@ export default function CreatePostForm() {
             }
             title="Post"
             aria-label="Post"
-            className="absolute right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition disabled:opacity-50"
+            className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 grid place-items-center rounded-full w-9 h-9 hover:bg-muted transition disabled:opacity-50"
           >
             <Send className="w-5 h-5" />
           </button>
