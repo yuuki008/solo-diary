@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export default function AttachmentsCarousel({
@@ -22,6 +23,18 @@ export default function AttachmentsCarousel({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const thumbnailsContainerRef = useRef<HTMLDivElement>(null);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const centerThumbnail = (index: number) => {
+    const container = thumbnailsContainerRef.current;
+    const btn = thumbnailRefs.current[index];
+    if (!container || !btn) return;
+
+    const containerWidth = container.clientWidth;
+    const targetLeft = btn.offsetLeft - (containerWidth - btn.clientWidth) / 2;
+    container.scrollTo({ left: targetLeft, behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (!api) {
@@ -29,10 +42,15 @@ export default function AttachmentsCarousel({
     }
 
     setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
+    const initialIndex = api.selectedScrollSnap();
+    setCurrent(initialIndex + 1);
+    // 初期表示時にもサムネイルを中央に寄せる
+    centerThumbnail(initialIndex);
 
     api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
+      const idx = api.selectedScrollSnap();
+      setCurrent(idx + 1);
+      centerThumbnail(idx);
     });
   }, [api]);
 
@@ -87,7 +105,10 @@ export default function AttachmentsCarousel({
       </Carousel>
 
       {count > 1 && (
-        <div className="mt-2 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+        <div
+          ref={thumbnailsContainerRef}
+          className="mt-2 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+        >
           {attachments.map((att, index) => {
             const isSelected = index + 1 === current;
             return (
@@ -96,6 +117,9 @@ export default function AttachmentsCarousel({
                 type="button"
                 aria-label={`Attachment ${index + 1}`}
                 onClick={() => api?.scrollTo(index)}
+                ref={(el) => {
+                  thumbnailRefs.current[index] = el;
+                }}
                 className={cn(
                   "relative flex-shrink-0 transition-transform",
                   isSelected ? "w-10 h-10" : "w-8 h-8"
