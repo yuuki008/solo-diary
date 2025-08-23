@@ -113,7 +113,7 @@ export default function AttachmentsCarousel({
                 }}
                 className={cn(
                   "cursor-pointer relative flex-shrink-0 transition-all duration-300",
-                  isSelected ? "w-9 h-9" : "w-6 h-6"
+                  isSelected ? "w-8 h-8" : "w-6 h-6 opacity-60"
                 )}
               >
                 {att.mime_type.startsWith("image/") ? (
