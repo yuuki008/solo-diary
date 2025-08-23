@@ -33,7 +33,6 @@ export default function PostCard({
 
   return (
     <div className="flex flex-col border-b pb-4 relative group">
-      <div className="absolute inset-0 bg-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity z-20 duration-300 pointer-events-none" />
       <button
         onClick={handleDelete}
         disabled={isDeleting}
