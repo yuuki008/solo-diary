@@ -1,7 +1,7 @@
 "use client";
 
 import AttachmentsCarousel from "@/components/attachments-carousel";
-import { formatDatetime } from "@/lib/utils";
+import { formatDatetime, formatTime } from "@/lib/utils";
 import { PostWithAttachments } from "@/types/database";
 import { Trash2 } from "lucide-react";
 import { deletePost } from "@/lib/database";
@@ -46,7 +46,7 @@ export default function PostCard({
         {post.content}
       </div>
       <div className="text-xs text-muted-foreground ml-auto mt-1">
-        {formatDatetime(post.created_at)}
+        {formatTime(post.created_at)}
       </div>
     </div>
   );
