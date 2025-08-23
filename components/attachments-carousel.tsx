@@ -79,7 +79,7 @@ export default function AttachmentsCarousel({
                   className="object-cover w-full h-full"
                   autoPlay
                   loop
-                  muted
+                  muted={index + 1 !== current}
                 />
               ) : att.mime_type.startsWith("audio/") ? (
                 <audio src={att.url} className="object-cover w-full h-full" />
@@ -112,8 +112,8 @@ export default function AttachmentsCarousel({
                   thumbnailRefs.current[index] = el;
                 }}
                 className={cn(
-                  "relative flex-shrink-0 transition-all duration-300",
-                  isSelected ? "w-10 h-10" : "w-8 h-8"
+                  "cursor-pointer relative flex-shrink-0 transition-all duration-300",
+                  isSelected ? "w-9 h-9" : "w-6 h-6"
                 )}
               >
                 {att.mime_type.startsWith("image/") ? (
