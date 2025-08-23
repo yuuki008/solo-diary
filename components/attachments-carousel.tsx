@@ -79,6 +79,7 @@ export default function AttachmentsCarousel({
                   className="object-cover w-full h-full"
                   autoPlay
                   loop
+                  playsInline
                   muted={index + 1 !== current}
                 />
               ) : att.mime_type.startsWith("audio/") ? (
