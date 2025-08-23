@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const MAX_DISPLAY_ATTACHMENTS = 4;
 
-export default function GridAttachments({
+export default function AttachmentsGrid({
   attachments,
 }: {
   attachments: PostWithAttachments["post_attachments"];
