@@ -107,7 +107,7 @@ export default function AttachmentsCarousel({
       {count > 1 && (
         <div
           ref={thumbnailsContainerRef}
-          className="mt-2 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+          className="mt-1 flex items-center gap-2 overflow-x-auto scrollbar-hide h-10 px-2"
         >
           {attachments.map((att, index) => {
             const isSelected = index + 1 === current;
@@ -121,7 +121,7 @@ export default function AttachmentsCarousel({
                   thumbnailRefs.current[index] = el;
                 }}
                 className={cn(
-                  "relative flex-shrink-0 transition-transform",
+                  "relative flex-shrink-0 transition-all duration-300",
                   isSelected ? "w-10 h-10" : "w-8 h-8"
                 )}
               >
