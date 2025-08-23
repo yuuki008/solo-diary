@@ -19,7 +19,12 @@ export default function AttachmentsCarousel({
   if (count === 0) return null;
 
   return (
-    <Carousel className="w-full">
+    <Carousel
+      opts={{
+        loop: true,
+      }}
+      className="w-full"
+    >
       <CarouselContent>
         {attachments.map((att, index) => (
           <CarouselItem key={index} className="aspect-square">
