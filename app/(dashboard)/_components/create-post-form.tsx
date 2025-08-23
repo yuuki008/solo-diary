@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AudioLinesIcon, Plus, Send, VideoIcon, X } from "lucide-react";
+import {
+  AudioLinesIcon,
+  Loader2,
+  Plus,
+  Send,
+  VideoIcon,
+  X,
+} from "lucide-react";
 import { createPost } from "@/lib/database";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
@@ -77,7 +84,7 @@ export default function CreatePostForm() {
   }, [attachments]);
 
   return (
-    <div className="relative max-w-lg w-full mx-4 border rounded-lg p-4">
+    <div className="relative w-full border rounded-lg p-4 bg-background">
       {attachments.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
           {attachments.map((att) => (
@@ -176,7 +183,11 @@ export default function CreatePostForm() {
             aria-label="Post"
             className="cursor-pointer w-9 h-9"
           >
-            <Send className="w-5 h-5" />
+            {isPosting ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Send className="w-5 h-5" />
+            )}
           </Button>
         </div>
       </form>
