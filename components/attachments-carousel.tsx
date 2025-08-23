@@ -78,7 +78,9 @@ export default function AttachmentsCarousel({
                   src={att.url}
                   className="object-cover w-full h-full"
                   loop
+                  muted
                   playsInline
+                  preload="metadata"
                 />
               ) : att.mime_type.startsWith("audio/") ? (
                 <audio
@@ -133,6 +135,7 @@ export default function AttachmentsCarousel({
                     className="object-cover w-full h-full"
                     muted
                     playsInline
+                    preload="metadata"
                   />
                 ) : (
                   <div className="w-full h-full bg-muted" />
