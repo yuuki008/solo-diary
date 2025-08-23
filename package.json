@@ -2,8 +2,11 @@
   "name": "solo-diary",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
-    "dev": "dotenvx run -- next dev --turbopack",
+    "dev": "dotenvx run -- next dev",
     "build:dev": "dotenvx run -- next build",
     "build": "dotenvx run -f .env.prod -- next build",
     "build:with-migration": "bun run migrate && bun run build",
