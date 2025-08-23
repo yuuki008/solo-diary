@@ -14,7 +14,7 @@ export default function PostCard({ post }: { post: PostWithAttachments }) {
     <div className="flex flex-col">
       <div
         className={cn(
-          "grid w-full gap-1 rounded overflow-hidden mb-4",
+          "grid w-full gap-1 rounded-lg overflow-hidden mb-4",
           post.post_attachments.length === 1
             ? "grid-cols-1"
             : post.post_attachments.length === 3
