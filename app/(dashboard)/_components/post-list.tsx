@@ -106,6 +106,10 @@ export default function PostList(props: PostListProps) {
     </div>
   );
 
+  const handlePostDeleted = useCallback((postId: number) => {
+    setAllPosts((prev) => prev.filter((post) => post.id !== postId));
+  }, []);
+
   return isFetching ? (
     <SkeletonRows rows={5} />
   ) : allPosts.length === 0 ? (
@@ -119,7 +123,11 @@ export default function PostList(props: PostListProps) {
           </div>
           <div className="flex flex-col gap-4">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard
+                key={post.id}
+                post={post}
+                onDeleted={handlePostDeleted}
+              />
             ))}
           </div>
         </div>
