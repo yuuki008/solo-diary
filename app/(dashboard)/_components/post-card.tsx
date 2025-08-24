@@ -6,6 +6,7 @@ import { PostWithAttachments } from "@/types/database";
 import { Trash2 } from "lucide-react";
 import { deletePost } from "@/lib/database";
 import { useState } from "react";
+import { ContentWithLinkTitles } from "@/components/content-with-link-titles";
 
 export default function PostCard({
   post,
@@ -42,9 +43,10 @@ export default function PostCard({
         <Trash2 className="w-4 h-4" />
       </button>
       <AttachmentsCarousel attachments={post.post_attachments} />
-      <div className="text-sm overflow-wrap whitespace-pre-wrap break-words mt-4">
-        {post.content}
-      </div>
+      <ContentWithLinkTitles
+        text={post.content || ""}
+        className="text-sm overflow-wrap whitespace-pre-wrap break-words mt-4"
+      />
       <div className="text-xs text-muted-foreground ml-auto mt-1">
         {formatTime(post.created_at)}
       </div>
