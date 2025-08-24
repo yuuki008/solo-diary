@@ -84,8 +84,8 @@ export default function CreatePostForm() {
   }, [attachments]);
 
   return (
-    <div className="fixed bottom-2 left-0 right-0 w-full flex justify-center">
-      <div className="relative max-w-lg w-full border rounded-lg p-4 bg-background/80 backdrop-blur-sm">
+    <div className="fixed bottom-1 left-0 right-0 flex justify-center">
+      <div className="relative max-w-lg w-[95%] border rounded-lg p-4 bg-background/80 backdrop-blur-sm">
         {attachments.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {attachments.map((att) => (

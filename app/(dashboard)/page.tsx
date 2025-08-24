@@ -8,8 +8,8 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="flex flex-col relative p-6">
-      <div className="overflow-y-auto flex-1 scrollbar-hide">
+    <div className="flex flex-col relative pt-6 max-w-lg w-[95%] mx-auto">
+      <div className="overflow-y-auto flex-1 scrollbar-hide pb-[50vh]">
         {user && <PostList userId={user.id} />}
       </div>
 
