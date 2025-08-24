@@ -32,7 +32,7 @@ export default function PostCard({
   };
 
   return (
-    <div className="flex flex-col border-b pb-4 relative group">
+    <div className="flex flex-col pb-4 relative group">
       <button
         onClick={handleDelete}
         disabled={isDeleting}
