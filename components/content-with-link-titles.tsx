@@ -11,30 +11,29 @@ type LinkPreview = {
   domain: string;
 };
 
-const URL_REGEX =
-  /https?:\/\/[\w.-]+(?:\.[\w.-]+)+(?:[\w\-._~:?#\[\]@!$&'()*+,;=%/]+)?/gi;
+const URL_PATTERN =
+  /https?:\/\/[\w.-]+(?:\.[\w.-]+)+(?:[\w\-._~:?#\[\]@!$&'()*+,;=%/]+)?/i;
+const URL_SPLIT_REGEX = new RegExp(`(${URL_PATTERN.source})`, "gi");
 
-function extractUrls(text: string): string[] {
+function isUrl(text: string): boolean {
+  return new RegExp(URL_PATTERN.source, "i").test(text);
+}
+
+function getDistinctUrls(text: string): string[] {
   if (!text) return [];
-  const matches = text.match(URL_REGEX) || [];
+  const matches = text.match(new RegExp(URL_PATTERN.source, "gi")) || [];
   return Array.from(new Set(matches));
 }
 
-export function ContentWithLinkTitles({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) {
-  const [previews, setPreviews] = useState<Record<string, LinkPreview>>({});
-  const urls = useMemo(() => extractUrls(text || ""), [text]);
+// 3) 取得フック
+function useLinkPreviews(urls: string[]) {
+  const [map, setMap] = useState<Record<string, LinkPreview>>({});
 
   useEffect(() => {
     let aborted = false;
     async function loadAll() {
       if (urls.length === 0) {
-        setPreviews({});
+        setMap({});
         return;
       }
       const results = await Promise.allSettled(
@@ -52,14 +51,14 @@ export function ContentWithLinkTitles({
         })
       );
       if (aborted) return;
-      const map: Record<string, LinkPreview> = {};
+      const next: Record<string, LinkPreview> = {};
       for (const r of results) {
         if (r.status === "fulfilled") {
           const [u, data] = r.value;
-          map[u] = data;
+          next[u] = data;
         }
       }
-      setPreviews(map);
+      setMap(next);
     }
     loadAll();
     return () => {
@@ -67,26 +66,31 @@ export function ContentWithLinkTitles({
     };
   }, [urls]);
 
-  function renderContentWithTitles(t: string): ReactNode[] | null {
-    if (!t) return null;
-    const nodes: ReactNode[] = [];
-    const regex = new RegExp(URL_REGEX);
-    regex.lastIndex = 0;
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(t)) !== null) {
-      const start = match.index;
-      const end = regex.lastIndex;
-      const url = match[0];
-      if (start > lastIndex) nodes.push(t.slice(lastIndex, start));
-      const preview = previews[url];
-      const title = preview?.title || preview?.domain || url;
-      const icon = preview?.icon;
+  return map;
+}
 
-      nodes.push(
+export function ContentWithLinkTitles({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const urls = useMemo(() => getDistinctUrls(text || ""), [text]);
+  const previews = useLinkPreviews(urls);
+
+  function renderContent(t: string): ReactNode[] | null {
+    if (!t) return null;
+    const parts = t.split(URL_SPLIT_REGEX).filter((p) => p !== "");
+    return parts.map((chunk, i) => {
+      if (!isUrl(chunk)) return chunk;
+      const preview = previews[chunk];
+      const title = preview?.title || preview?.domain || chunk;
+      const icon = preview?.icon;
+      return (
         <a
-          key={`u-${start}-${end}`}
-          href={url}
+          key={`url-${i}-${chunk}`}
+          href={chunk}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary underline inline-flex items-baseline gap-1 leading-[inherit]"
@@ -104,15 +108,8 @@ export function ContentWithLinkTitles({
           <span>{title}</span>
         </a>
       );
-      lastIndex = end;
-    }
-    if (lastIndex < t.length) nodes.push(t.slice(lastIndex));
-    return nodes;
+    });
   }
 
-  return (
-    <div className={cn("text-sm", className)}>
-      {renderContentWithTitles(text)}
-    </div>
-  );
+  return <div className={cn("text-sm", className)}>{renderContent(text)}</div>;
 }
