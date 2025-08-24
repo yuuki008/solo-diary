@@ -98,11 +98,17 @@ export default function PostList(props: PostListProps) {
     [allPosts]
   );
 
-  const SkeletonRows = ({ rows = 5 }: { rows?: number }) => (
-    <div className="flex flex-col gap-4">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="w-full h-8" />
-      ))}
+  const SkeletonRows = () => (
+    <div className="flex flex-col gap-2">
+      <Skeleton className="aspect-square w-full rounded-none" />
+      <div className="flex gap-2">
+        <Skeleton className="w-6 h-6 rounded-none" />
+        <Skeleton className="w-6 h-6 rounded-none" />
+        <Skeleton className="w-6 h-6 rounded-none" />
+      </div>
+      <Skeleton className="w-full h-4" />
+      <Skeleton className="w-full h-4" />
+      <Skeleton className="w-full h-4" />
     </div>
   );
 
@@ -111,7 +117,7 @@ export default function PostList(props: PostListProps) {
   }, []);
 
   return isFetching ? (
-    <SkeletonRows rows={5} />
+    <SkeletonRows />
   ) : allPosts.length === 0 ? (
     <div className="text-center text-2xl">No posts yet</div>
   ) : (
@@ -133,7 +139,7 @@ export default function PostList(props: PostListProps) {
         </div>
       ))}
       <div ref={sentinelRef} />
-      {isLoadingMore && <SkeletonRows rows={3} />}
+      {isLoadingMore && <SkeletonRows />}
     </div>
   );
 }
