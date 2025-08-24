@@ -7,11 +7,24 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUserPostsClient } from "@/lib/database";
 import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
-type PostListProps = {
-  userId: string;
-};
-export default function PostList(props: PostListProps) {
+export const SkeletonPost = () => (
+  <div className="flex flex-col gap-2">
+    <Skeleton className="aspect-square w-full rounded-none" />
+    <div className="flex gap-2">
+      <Skeleton className="w-6 h-6 rounded-none" />
+      <Skeleton className="w-6 h-6 rounded-none" />
+      <Skeleton className="w-6 h-6 rounded-none" />
+    </div>
+    <Skeleton className="w-full h-4" />
+    <Skeleton className="w-full h-4" />
+    <Skeleton className="w-full h-4" />
+  </div>
+);
+
+export default function PostList() {
+  const { user } = useAuth();
   const searchParams = useSearchParams();
   const date = searchParams.get("date") ?? undefined;
 
@@ -23,14 +36,18 @@ export default function PostList(props: PostListProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const fetchPage = useCallback(
-    async (pageIndex: number) =>
-      getUserPostsClient({
-        userId: props.userId,
+    async (pageIndex: number) => {
+      if (!user?.id) return { posts: [], hasMore: false };
+
+      const posts = await getUserPostsClient({
+        userId: user.id,
         date,
         limit: 10,
         page: pageIndex,
-      }),
-    [props.userId, date]
+      });
+      return posts;
+    },
+    [user, date]
   );
 
   useEffect(() => {
@@ -98,26 +115,12 @@ export default function PostList(props: PostListProps) {
     [allPosts]
   );
 
-  const SkeletonRows = () => (
-    <div className="flex flex-col gap-2">
-      <Skeleton className="aspect-square w-full rounded-none" />
-      <div className="flex gap-2">
-        <Skeleton className="w-6 h-6 rounded-none" />
-        <Skeleton className="w-6 h-6 rounded-none" />
-        <Skeleton className="w-6 h-6 rounded-none" />
-      </div>
-      <Skeleton className="w-full h-4" />
-      <Skeleton className="w-full h-4" />
-      <Skeleton className="w-full h-4" />
-    </div>
-  );
-
   const handlePostDeleted = useCallback((postId: number) => {
     setAllPosts((prev) => prev.filter((post) => post.id !== postId));
   }, []);
 
   return isFetching ? (
-    <SkeletonRows />
+    <SkeletonPost />
   ) : allPosts.length === 0 ? (
     <div className="text-center text-2xl">No posts yet</div>
   ) : (
@@ -139,7 +142,7 @@ export default function PostList(props: PostListProps) {
         </div>
       ))}
       <div ref={sentinelRef} />
-      {isLoadingMore && <SkeletonRows />}
+      {isLoadingMore && <SkeletonPost />}
     </div>
   );
 }
