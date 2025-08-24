@@ -66,7 +66,7 @@ export default function AttachmentsCarousel({
           {attachments.map((att, index) => (
             <CarouselItem
               key={index}
-              className="w-full flex items-center justify-center"
+              className="w-full flex items-center justify-center max-h-[500px]"
             >
               {att.mime_type.startsWith("image/") ? (
                 <Image
@@ -74,12 +74,12 @@ export default function AttachmentsCarousel({
                   alt={att.url}
                   width={10000}
                   height={10000}
-                  className="object-contain w-full"
+                  className="object-contain h-full w-auto mx-auto"
                 />
               ) : att.mime_type.startsWith("video/") ? (
                 <video
                   src={att.url}
-                  className="object-cover w-full h-full"
+                  className="object-cover h-full w-auto mx-auto"
                   autoPlay
                   loop
                   muted
