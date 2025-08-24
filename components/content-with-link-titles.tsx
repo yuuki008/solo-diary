@@ -93,14 +93,14 @@ export function ContentWithLinkTitles({
           href={chunk}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary underline inline-flex items-baseline gap-1 leading-[inherit]"
+          className="text-primary underline leading-4"
         >
           {icon && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={icon}
               alt="favicon"
-              className="inline-block w-[1em] h-[1em] self-baseline rounded-sm border border-border"
+              className="inline-block w-4 h-4 mr-1 self-baseline rounded-sm border border-border"
               loading="lazy"
               decoding="async"
             />
