@@ -77,6 +77,7 @@ export default function AttachmentsCarousel({
                 <video
                   src={att.url}
                   className="object-cover w-full h-full"
+                  autoPlay
                   loop
                   muted
                   playsInline
