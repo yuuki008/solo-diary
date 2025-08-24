@@ -120,7 +120,6 @@ export async function GET(req: Request) {
           "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       },
       signal: controller.signal,
-      // @ts-expect-error - Next runtime accepts this
       cache: "no-store",
     });
 
@@ -153,7 +152,7 @@ export async function GET(req: Request) {
     return Response.json(data, {
       headers: { "cache-control": "public, max-age=3600, s-maxage=86400" },
     });
-  } catch (e) {
+  } catch {
     const domain = parsed.hostname;
     const fallback: LinkPreview = {
       url: parsed.toString(),
