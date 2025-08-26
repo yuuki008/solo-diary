@@ -127,7 +127,7 @@ export default function PostList() {
     <div className="flex flex-col gap-6">
       {Object.entries(groupPostsByDate).map(([date, posts]) => (
         <div key={date} className="relative flex flex-col gap-4">
-          <div className="font-normal mx-auto border px-2 py-1 text-xs sticky top-0 z-20 bg-background rounded-md w-fit">
+          <div className="font-normal mx-auto border px-2 py-1 text-xs sticky top-2 z-20 bg-background rounded-md w-fit">
             {dayjs(date).format("YYYY-MM-DD")}
           </div>
           <div className="flex flex-col gap-4">
