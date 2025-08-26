@@ -69,13 +69,16 @@ export default function AttachmentsCarousel({
               className="w-full flex items-center justify-center max-h-[500px]"
             >
               {att.mime_type.startsWith("image/") ? (
-                <Image
-                  src={att.url}
-                  alt={att.url}
-                  width={10000}
-                  height={10000}
-                  className="object-contain h-full w-auto mx-auto"
-                />
+                <div className="relative w-full aspect-square max-h-[500px]">
+                  <Image
+                    src={att.url}
+                    alt={att.url}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
+                    className="object-contain mx-auto"
+                  />
+                </div>
               ) : att.mime_type.startsWith("video/") ? (
                 <video
                   src={att.url}
@@ -131,6 +134,7 @@ export default function AttachmentsCarousel({
                     alt={att.url}
                     width={256}
                     height={256}
+                    sizes="64px"
                     className="object-cover w-full h-full"
                   />
                 ) : att.mime_type.startsWith("video/") ? (
