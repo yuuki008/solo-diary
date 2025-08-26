@@ -9,5 +9,6 @@ export default function DashboardLayout({
 }) {
   const { user } = useAuth();
   if (!user) return <></>;
+
   return <div>{children}</div>;
 }
