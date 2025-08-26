@@ -3,11 +3,8 @@
 import { PostWithAttachments } from "@/types/database";
 import dayjs from "dayjs";
 import PostCard from "./post-card";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUserPostsClient } from "@/lib/database";
-import { useSearchParams } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
 
 export const SkeletonPost = () => (
   <div className="flex flex-col gap-2">
@@ -23,105 +20,26 @@ export const SkeletonPost = () => (
   </div>
 );
 
-export default function PostList() {
-  const { user } = useAuth();
-  const searchParams = useSearchParams();
-  const date = searchParams.get("date") ?? undefined;
+type PostListProps = {
+  posts: PostWithAttachments[];
+  groupPostsByDate: Record<string, PostWithAttachments[]>;
+  isFetching: boolean;
+  isLoadingMore: boolean;
+  handlePostDeleted: (postId: number) => void;
+};
 
-  const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [allPosts, setAllPosts] = useState<PostWithAttachments[]>([]);
-  const [nextPage, setNextPage] = useState<number>(0);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+export default function PostList({
+  posts,
+  groupPostsByDate,
+  isFetching,
+  isLoadingMore,
+  handlePostDeleted,
+}: PostListProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const fetchPage = useCallback(
-    async (pageIndex: number) => {
-      if (!user?.id) return { posts: [], hasMore: false };
-
-      const posts = await getUserPostsClient({
-        userId: user.id,
-        date,
-        limit: 10,
-        page: pageIndex,
-      });
-      return posts;
-    },
-    [user, date]
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      setIsFetching(true);
-      setAllPosts([]);
-      setHasMore(true);
-      setNextPage(0);
-      const { posts, hasMore } = await fetchPage(0);
-      if (cancelled) return;
-      setAllPosts(posts);
-      setHasMore(hasMore);
-      setNextPage(1);
-      setIsFetching(false);
-    };
-    run();
-    return () => {
-      cancelled = true;
-    };
-  }, [fetchPage]);
-
-  const loadMore = useCallback(async () => {
-    if (isLoadingMore || !hasMore) return;
-    setIsLoadingMore(true);
-    const { posts: nextPosts, hasMore: nextHasMore } = await fetchPage(
-      nextPage
-    );
-    setAllPosts((prev) => [...prev, ...nextPosts]);
-    setNextPage((p) => p + 1);
-    setHasMore(nextHasMore);
-    setIsLoadingMore(false);
-  }, [isLoadingMore, hasMore, fetchPage, nextPage]);
-
-  useEffect(() => {
-    const target = sentinelRef.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && !isFetching) {
-          loadMore();
-        }
-      },
-      { root: null, rootMargin: "0px", threshold: 1.0 }
-    );
-
-    observer.observe(target);
-    return () => {
-      observer.disconnect();
-    };
-  }, [loadMore, isFetching]);
-
-  const groupPostsByDate = useMemo(
-    () =>
-      allPosts.reduce((groups: Record<string, PostWithAttachments[]>, post) => {
-        const date = dayjs(post.created_at).format("YYYY-MM-DD");
-        if (!groups[date]) {
-          groups[date] = [];
-        }
-        groups[date].push(post);
-        return groups;
-      }, {} as Record<string, PostWithAttachments[]>),
-    [allPosts]
-  );
-
-  const handlePostDeleted = useCallback((postId: number) => {
-    setAllPosts((prev) => prev.filter((post) => post.id !== postId));
-  }, []);
 
   return isFetching ? (
     <SkeletonPost />
-  ) : allPosts.length === 0 ? (
+  ) : posts.length === 0 ? (
     <div className="text-center text-2xl">No posts yet</div>
   ) : (
     <div className="flex flex-col gap-6">

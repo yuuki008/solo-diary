@@ -15,7 +15,11 @@ import Image from "next/image";
 import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-export default function CreatePostForm() {
+type CreatePostFormProps = {
+  onPostCreated: () => void;
+};
+
+export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const { user } = useAuth();
   const [content, setContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
@@ -60,6 +64,7 @@ export default function CreatePostForm() {
         content: content.trim(),
         attachments: attachments.map((a) => a.file),
       });
+      onPostCreated();
       setContent("");
       // revoke URLs before reset
       attachments.forEach((a) => URL.revokeObjectURL(a.url));
