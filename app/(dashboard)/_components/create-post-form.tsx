@@ -84,7 +84,7 @@ export default function CreatePostForm() {
   }, [attachments]);
 
   return (
-    <div className="fixed bottom-1 left-0 right-0 flex justify-center">
+    <div className="fixed bottom-1 left-0 right-0 flex justify-center z-50">
       <div className="relative max-w-lg w-[95%] border rounded-lg p-4 bg-background/90 backdrop-blur-sm">
         {attachments.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
@@ -136,20 +136,13 @@ export default function CreatePostForm() {
             ))}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="w-full">
+        <form className="w-full">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="What are you thinking?"
             disabled={!user || isPosting}
             className="w-full min-h-10 border-input placeholder:text-muted-foreground field-sizing-content outline-none resize-none"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                // 単純な送信（改行は Shift+Enter）
-                e.preventDefault();
-                handleSubmit();
-              }
-            }}
           />
 
           <div className="flex items-center justify-between">
@@ -174,7 +167,8 @@ export default function CreatePostForm() {
             </Button>
 
             <Button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               disabled={
                 !user ||
                 isPosting ||
