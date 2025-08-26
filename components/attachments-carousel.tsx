@@ -75,6 +75,7 @@ export default function AttachmentsCarousel({
                     alt={att.url}
                     fill
                     priority={index === 0}
+                    loading="eager"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 800px"
                     className="object-contain mx-auto"
                   />
