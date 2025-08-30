@@ -6,6 +6,25 @@ import {
   CreatePostData,
   Post,
 } from "@/types/database";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { getRange } from "./utils";
+
+export const getPostsWithPagination = async (
+  client: SupabaseClient,
+  page: number
+): Promise<PostWithAttachments[]> => {
+  const [from, to] = getRange(page, 10);
+
+  const { data, error } = await client
+    .from("posts")
+    .select("*, post_attachments(*)")
+    .order("created_at", { ascending: false })
+    .range(from, to);
+
+  if (error) throw error;
+
+  return data;
+};
 
 export const getUserPostsClient = async (args: {
   userId: string;
@@ -47,38 +66,6 @@ export const getUserPostsClient = async (args: {
   const hasMore = typeof count === "number" ? from + limit < count : false;
 
   return { posts, hasMore };
-};
-
-export const getUserPosts = async (args: {
-  userId: string;
-  date?: string;
-  limit?: number;
-}): Promise<PostWithAttachments[]> => {
-  const { userId, date, limit } = args;
-
-  let query = supabase
-    .from("posts")
-    .select(
-      `
-      *,
-      post_attachments (*)
-    `
-    )
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (date) {
-    const endOfDay = dayjs(date).endOf("day").toISOString();
-    query = query.lte("created_at", endOfDay);
-  }
-
-  if (limit) {
-    query = query.limit(limit);
-  }
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return data as PostWithAttachments[];
 };
 
 export const getPost = async (postId: number): Promise<Post> => {

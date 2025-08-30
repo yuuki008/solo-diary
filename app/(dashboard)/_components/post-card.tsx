@@ -1,3 +1,5 @@
+"use client";
+
 import AttachmentsCarousel from "@/components/attachments-carousel";
 import { formatTime } from "@/lib/utils";
 import { PostWithAttachments } from "@/types/database";

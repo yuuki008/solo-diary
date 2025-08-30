@@ -1,10 +1,14 @@
 "use client";
 
-import { PostWithAttachments } from "@/types/database";
-import dayjs from "dayjs";
-import PostCard from "./post-card";
-import { useRef } from "react";
+import InfiniteScroll from "@/components/infinite-scroll";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getPostsWithPagination } from "@/lib/database";
+import { createClient } from "@/lib/supabase/client";
+import { PostWithAttachments } from "@/types/database";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { useMemo } from "react";
+import PostCard from "./post-card";
 
 export const SkeletonPost = () => (
   <div className="flex flex-col gap-2">
@@ -20,47 +24,68 @@ export const SkeletonPost = () => (
   </div>
 );
 
-type PostListProps = {
-  posts: PostWithAttachments[];
-  groupPostsByDate: Record<string, PostWithAttachments[]>;
-  isFetching: boolean;
-  isLoadingMore: boolean;
-  handlePostDeleted: (postId: number) => void;
-};
+export default function PostList() {
+  const client = createClient();
 
-export default function PostList({
-  posts,
-  groupPostsByDate,
-  isFetching,
-  isLoadingMore,
-  handlePostDeleted,
-}: PostListProps) {
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const {
+    isLoading,
+    isError,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts"],
+    queryFn: ({ pageParam }) => getPostsWithPagination(client, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.length > 0 ? pages.length : undefined;
+    },
+  });
 
-  return isFetching ? (
-    <SkeletonPost />
-  ) : posts.length === 0 ? (
-    <div className="text-center text-2xl">No posts yet</div>
-  ) : (
-    <div className="flex flex-col gap-6">
-      {Object.entries(groupPostsByDate).map(([date, posts]) => (
-        <div key={date} className="relative flex flex-col gap-4">
-          <div className="font-normal mx-auto border px-2 py-1 text-xs sticky top-2 z-20 bg-background rounded-md w-fit">
-            {dayjs(date).format("YYYY-MM-DD")}
+  const groupPostsByDate = useMemo(
+    () =>
+      data?.pages.reduce(
+        (groups: Record<string, PostWithAttachments[]>, page) => {
+          page.forEach((post) => {
+            const date = dayjs(post.created_at).format("YYYY-MM-DD");
+            if (!groups[date]) {
+              groups[date] = [];
+            }
+            groups[date].push(post);
+          });
+          return groups;
+        },
+        {} as Record<string, PostWithAttachments[]>
+      ),
+    [data]
+  );
+
+  if (isLoading) return <SkeletonPost />;
+
+  if (isError) return <div className="text-destructive">{error.message}</div>;
+
+  return (
+    <InfiniteScroll
+      isLoadingIntial={isLoading}
+      isLoadingMore={isFetchingNextPage}
+      loadMore={() => hasNextPage && fetchNextPage()}
+    >
+      <div className="flex flex-col gap-6">
+        {Object.entries(groupPostsByDate ?? {}).map(([date, posts]) => (
+          <div key={date} className="relative flex flex-col gap-4">
+            <div className="font-normal mx-auto border px-2 py-1 text-xs sticky top-2 z-20 bg-background rounded-md w-fit">
+              {dayjs(date).format("YYYY-MM-DD")}
+            </div>
+            <div className="flex flex-col gap-4">
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-4">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onDeleted={handlePostDeleted}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
-      <div ref={sentinelRef} />
-      {isLoadingMore && <SkeletonPost />}
-    </div>
+        ))}
+      </div>
+    </InfiniteScroll>
   );
 }
