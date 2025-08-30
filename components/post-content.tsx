@@ -69,7 +69,7 @@ function useLinkPreviews(urls: string[]) {
   return map;
 }
 
-export function ContentWithLinkTitles({
+export default function PostContent({
   text,
   className,
 }: {
