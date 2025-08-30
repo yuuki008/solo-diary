@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { supabase } from "./supabase/client";
 import {
   PostUpdate,
