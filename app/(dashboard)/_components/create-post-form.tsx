@@ -14,11 +14,9 @@ import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 
 export default function CreatePostForm() {
   const { user } = useAuth();
-  const router = useRouter();
   const [content, setContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   type Uploaded = { id: string; file: File; url: string };
@@ -62,7 +60,8 @@ export default function CreatePostForm() {
         content: content.trim(),
         attachments: attachments.map((a) => a.file),
       });
-      router.refresh();
+
+      window.location.reload();
     } finally {
       setIsPosting(false);
     }
