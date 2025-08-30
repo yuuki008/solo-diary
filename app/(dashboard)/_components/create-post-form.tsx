@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { createPost } from "@/lib/database";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

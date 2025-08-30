@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/contexts/AuthContext";
+import AuthProvider from "@/providers/AuthProvider";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
@@ -26,7 +27,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${notoSansJP.variable} antialiased dark`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );

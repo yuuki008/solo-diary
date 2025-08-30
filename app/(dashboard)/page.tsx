@@ -2,7 +2,7 @@
 
 import PostList from "./_components/post-list";
 import CreatePostForm from "./_components/create-post-form";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/providers/AuthProvider";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PostWithAttachments } from "@/types/database";
