@@ -86,7 +86,7 @@ export default function AttachmentsCarousel({
                   className="object-cover h-full w-auto mx-auto"
                   autoPlay
                   loop
-                  muted
+                  muted={!(current === index + 1)}
                   playsInline
                   preload="metadata"
                 />
