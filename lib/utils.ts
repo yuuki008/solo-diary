@@ -17,3 +17,10 @@ export function formatDatetime(datetime: string) {
 export function formatTime(datetime: string) {
   return dayjs(datetime).format("HH:mm");
 }
+
+export function getRange(page: number, limit: number) {
+  const from = page * limit;
+  const to = from + limit - 1;
+
+  return [from, to];
+}

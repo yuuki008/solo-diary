@@ -10,17 +10,15 @@ import {
   X,
 } from "lucide-react";
 import { createPost } from "@/lib/database";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 import { generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-type CreatePostFormProps = {
-  onPostCreated: () => void;
-};
-
-export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
+export default function CreatePostForm() {
   const { user } = useAuth();
+  const router = useRouter();
   const [content, setContent] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   type Uploaded = { id: string; file: File; url: string };
@@ -64,11 +62,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
         content: content.trim(),
         attachments: attachments.map((a) => a.file),
       });
-      onPostCreated();
-      setContent("");
-      // revoke URLs before reset
-      attachments.forEach((a) => URL.revokeObjectURL(a.url));
-      setAttachments([]);
+      router.refresh();
     } finally {
       setIsPosting(false);
     }

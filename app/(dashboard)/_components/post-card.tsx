@@ -1,10 +1,12 @@
+"use client";
+
 import AttachmentsCarousel from "@/components/attachments-carousel";
 import { formatTime } from "@/lib/utils";
 import { PostWithAttachments } from "@/types/database";
 import { Trash2 } from "lucide-react";
 import { deletePost } from "@/lib/database";
 import { useState } from "react";
-import { ContentWithLinkTitles } from "@/components/content-with-link-titles";
+import PostContent from "@/components/post-content";
 
 export default function PostCard({
   post,
@@ -41,7 +43,7 @@ export default function PostCard({
         <Trash2 className="w-4 h-4" />
       </button>
       <AttachmentsCarousel attachments={post.post_attachments} />
-      <ContentWithLinkTitles
+      <PostContent
         text={post.content || ""}
         className="text-sm overflow-wrap whitespace-pre-wrap break-words mt-4"
       />
