@@ -20,14 +20,14 @@ async function page() {
   });
 
   return (
-    <div className="flex flex-col relative max-w-lg w-[95%] mx-auto">
-      <div className="pt-6 pb-[50vh]">
-        <HydrationBoundary state={dehydrate(queryClient)}>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="flex flex-col relative max-w-lg w-[95%] mx-auto">
+        <div className="pt-6 pb-[50vh]">
           <PostList />
-        </HydrationBoundary>
+        </div>
       </div>
       <CreatePostForm />
-    </div>
+    </HydrationBoundary>
   );
 }
 
