@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   AudioLinesIcon,
   Loader2,
-  Plus,
+  Paperclip,
   Send,
   VideoIcon,
   X,
@@ -161,7 +161,7 @@ export default function CreatePostForm() {
               variant="outline"
               className="cursor-pointer w-9 h-9"
             >
-              <Plus className="w-5 h-5" />
+              <Paperclip className="w-5 h-5" />
             </Button>
 
             <Button
