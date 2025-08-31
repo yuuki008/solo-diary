@@ -45,7 +45,6 @@ export default function AuthProvider({
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(session);
       setSession(session);
       setAuthUser(session?.user ?? null);
 
