@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description:
     "Simple daily journaling. No unnecessary features, just what you need for recording your daily life.",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon2.png",
   },
 };
 
